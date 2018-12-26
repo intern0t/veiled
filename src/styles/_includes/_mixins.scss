@@ -1,0 +1,47 @@
+/**
+ * Copyright (c) Veiled, 2018
+ * Document: _variables.scss
+ * Developer: Prashant Shrestha (www.prashant.me)
+ * Date: Tue Dec 25 22:44:44 EST 2018
+ */
+
+@mixin Smoothing {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "pnum";
+    font-feature-settings: "pnum";
+    font-variant-numeric: proportional-nums;
+}
+
+@mixin Font($fontFamily) {
+    font-family: $fontFamily;
+    @include Smoothing;
+}
+
+@mixin Flex($dir: row) {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: $dir;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: $dir;
+}
+
+@mixin Transition($type, $delay) {
+    -webkit-transition: $type $delay ease-in-out;
+    transition: $type $delay ease-in-out;
+}
+
+@mixin BorderRadius($radii, $whichSides: all) {
+    @if $whichSides == 'all'{
+        border-radius: $radii;
+    }@else if $whichSides == 'left' {
+        border-top-left-radius: $radii;
+        border-bottom-left-radius: $radii;
+    }@else {
+        border-top-right-radius: $radii;
+        border-bottom-right-radius: $radii;
+    }
+}
