@@ -5,4 +5,67 @@
  * Date: Tue Dec 25 22:44:44 EST 2018
  */
 
-@import "./_includes/reset";
+@import "./_includes/reset", "./_includes/colors", "./_includes/mixins",
+    "./_includes/variables";
+
+body {
+    @include Font($defaultFontFamily);
+    font-size: $defaultFontSize;
+    color: $defaultForeground;
+
+    .main-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        @include Flex(row);
+        overflow: hidden;
+
+        .sidebar {
+            width: $defaultSidebarWidth;
+            background: $OuterSpace;
+            @include Flex(column);
+            justify-content: center;
+            align-items: center;
+
+            &-section {
+                width: 100%;
+                @include Flex(column);
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+
+                li {
+                    width: 100%;
+
+                    a,
+                    a:visited {
+                        padding: 20px;
+                        display: block;
+                        text-align: center;
+                        font-size: $defaultFontSize * 1.5;
+                        color: $GullGray;
+                        border-left: 4px solid transparent;
+                        @include Transition(all, .3s);
+                        @include BorderRadius(1px, left);
+
+                        &:hover{
+                            background: $BrightGray;
+                            color: $TwilightBlue;
+                            border-left: 4px solid $Shakespeare;
+                        }
+                    }
+                }
+            }
+        }
+
+        .brightbar {
+            width: 300px;
+            background: $BrightGray;
+        }
+
+        .frightbar {
+            flex: 1;
+            background: $TwilightBlue;
+        }
+    }
+}
