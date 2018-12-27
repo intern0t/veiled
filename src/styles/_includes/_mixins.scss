@@ -16,7 +16,7 @@
 
 @mixin Font($fontFamily) {
     font-family: $fontFamily;
-    @include Smoothing;
+    // @include Smoothing;
 }
 
 @mixin Flex($dir: row) {
@@ -35,13 +35,16 @@
 }
 
 @mixin BorderRadius($radii, $whichSides: all) {
-    @if $whichSides == 'all'{
+    @if $whichSides == "all" {
         border-radius: $radii;
-    }@else if $whichSides == 'left' {
+    } @else if $whichSides == "left" {
         border-top-left-radius: $radii;
         border-bottom-left-radius: $radii;
-    }@else {
+    } @else if $whichSides == "right" {
         border-top-right-radius: $radii;
         border-bottom-right-radius: $radii;
+    } @else if $whichSides == "top" {
+        border-top-left-radius: $radii;
+        border-top-right-radius: $radii;
     }
 }

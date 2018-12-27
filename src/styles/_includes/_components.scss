@@ -1,0 +1,25 @@
+/**
+ * Copyright (c) Veiled, 2018
+ * Document: _components.scss
+ * Developer: Prashant Shrestha (www.prashant.me)
+ * Date: Wed Dec 26 12:04:15 EST 2018
+ */
+
+@import "./colors", "./variables", "./mixins";
+
+.frightbar-inner {
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+        background-color: $AquaHaze;
+        @include BorderRadius(10px, all);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba($OuterSpace, 0.6);
+        @include BorderRadius(10px, all);
+    }
+}
