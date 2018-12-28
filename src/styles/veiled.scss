@@ -6,7 +6,7 @@
  */
 
 @import "./_includes/reset", "./_includes/colors", "./_includes/mixins",
-    "./_includes/variables";
+    "./_includes/variables", "./_includes/components";
 
 body {
     @include Font($defaultFontFamily);
@@ -24,13 +24,21 @@ body {
             width: $defaultSidebarWidth;
             background: $OuterSpace;
             @include Flex(column);
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
             justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
             align-items: center;
 
             &-section {
                 width: 100%;
                 @include Flex(column);
+                -webkit-box-pack: center;
+                -ms-flex-pack: center;
                 justify-content: center;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
                 align-items: center;
                 padding: 10px;
 
@@ -44,14 +52,13 @@ body {
                         text-align: center;
                         font-size: $defaultFontSize * 1.5;
                         color: $GullGray;
-                        border-left: 4px solid transparent;
-                        @include Transition(all, .3s);
-                        @include BorderRadius(1px, left);
+                        // border-left: 4px solid transparent;
+                        @include Transition(all, 0.3s);
 
-                        &:hover{
+                        &:hover {
                             background: $BrightGray;
                             color: $TwilightBlue;
-                            border-left: 4px solid $Shakespeare;
+                            // border-left: 4px solid $Shakespeare;
                         }
                     }
                 }
@@ -59,13 +66,154 @@ body {
         }
 
         .brightbar {
-            width: 300px;
+            width: $defaultBrightBarWidth;
             background: $BrightGray;
         }
 
         .frightbar {
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
             flex: 1;
             background: $TwilightBlue;
+            @include Flex(column);
+            overflow: hidden;
+
+            &-top {
+                width: 100%;
+                border-bottom: 1px solid rgba($BrightGray, 0.15);
+                padding: 30px;
+                -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
+                box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
+                @include Flex(row);
+                align-items: center;
+                justify-content: flex-start;
+                @include Font($defaultFontFamily);
+                font-size: $defaultFontSize - 1;
+
+                .user-avatar{
+                    margin: 0 10px 0 0;
+                }
+                .tip{
+                    margin: 0 10px;
+                }
+            }
+
+            &-inner {
+                padding: 20px;
+                overflow-x: hidden;
+                overflow: auto;
+
+                .message-entry {
+                    @include Flex(column);
+                    -webkit-box-pack: start;
+                    -ms-flex-pack: start;
+                    justify-content: flex-start;
+                    line-height: $defaultFontSize + 25px;
+                    @include BorderRadius(2px, all);
+
+                    .timestamp {
+                        font-size: $defaultFontSize - 3;
+                    }
+
+                    div {
+                        @include Flex(row);
+                        -ms-flex-line-pack: center;
+                        align-content: center;
+
+                        .from {
+                            width: auto;
+                            margin: 0 20px;
+                            font-size: $defaultFontSize - 1;
+                        }
+
+                        .message-wrapper {
+                            @include Flex(column);
+
+                            .message {
+                                font-size: $defaultFontSize - 1;
+                                background: rgba($BrightGray, 0.08);
+                                @include BorderRadius(5px, all);
+                                color: rgba($BrightGray, 0.7);
+                                padding: 0 20px;
+
+                                &-from {
+                                    background: rgba($Shakespeare, 0.15);
+                                }
+
+                                &-you {
+                                    background: rgba($BrightGray, 0.04);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .speakbar {
+                @include Flex(row);
+                -ms-flex-line-pack: center;
+                align-content: center;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                padding: 20px;
+                margin: 10px 0;
+
+                input[type="text"] {
+                    -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                    flex: 1;
+                    outline: 0;
+                    border: 0;
+                    @include Font($defaultFontFamily);
+                    line-height: $defaultFontSize + 5;
+                    font-size: $defaultFontSize - 2;
+                    color: $TwilightBlue;
+                    letter-spacing: 0.3px;
+                    padding: 10px;
+                    background: rgba($BrightGray, 0.9);
+                    @include BorderRadius(3px, all);
+
+                    &::-webkit-input-placeholder {
+                        color: $GullGray;
+                    }
+
+                    &:-ms-input-placeholder {
+                        color: $GullGray;
+                    }
+
+                    &::placeholder {
+                        color: $GullGray;
+                    }
+                }
+
+                ul {
+                    @include Flex(row);
+                    -webkit-box-pack: start;
+                    -ms-flex-pack: start;
+                    justify-content: flex-start;
+                    -ms-flex-line-pack: center;
+                    align-content: center;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    padding: 5px;
+
+                    li {
+                        a,
+                        a:visited {
+                            display: block;
+                            padding: 5px 10px;
+                            font-size: $defaultFontSize + 5;
+                            color: $GullGray;
+
+                            &:hover {
+                                color: $OuterSpace;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

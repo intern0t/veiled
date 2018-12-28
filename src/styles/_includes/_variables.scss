@@ -13,10 +13,12 @@ $defaultForeground: $GullGray;
 $defaultColors: $GullGray;
 
 /** Sizing */
-$defaultFontFamily: $UbuntuCondensed;
+$defaultFontFamily: $FiraSans;
 $defaultFontSize: 14px;
 
 // Sidebar
 $defaultSidebarWidth: 90px;
+$defaultTipDimension: 7px;
 
-/**  */
+// Brightbar
+$defaultBrightBarWidth: 270px;
