@@ -9,7 +9,7 @@
 
 .frightbar-inner {
     &::-webkit-scrollbar {
-        width: 10px;
+        width: 7px;
     }
 
     &::-webkit-scrollbar-track {
@@ -22,4 +22,32 @@
         background: rgba($OuterSpace, 0.6);
         @include BorderRadius(10px, all);
     }
+}
+
+.user-avatar {
+    $userAvatarDimensions: 35px;
+    width: $userAvatarDimensions;
+    height: $userAvatarDimensions;
+    @include BorderRadius(50%, all);
+    background: $OuterSpace;
+    @include Flex(row);
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+
+    span {
+        @include Font($defaultFontFamily);
+        font-size: $defaultFontSize + 2;
+        color: $TwilightBlue;
+    }
+}
+
+.tip {
+    width: $defaultTipDimension;
+    height: $defaultTipDimension;
+    @include BorderRadius(50%, all);
+    position: relative;
+    float: right;
+    margin: -$defaultTipDimension 0 0 -$defaultTipDimension;
 }
