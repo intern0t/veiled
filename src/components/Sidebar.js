@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import Icon from "./Icon";
 import Tip from "./Tip";
-import { BrowserRouter as Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppConsumer } from "../contexts/AppProvider";
 
 class Sidebar extends Component {
     render() {
+        // const { pathname } = this.props.location;
         const pathname = "/";
 
         return (
@@ -29,8 +30,8 @@ class Sidebar extends Component {
                                 </Link>
                             </li>
                             <li>
-                                <a
-                                    href="/"
+                                <Link
+                                    to="/messages"
                                     title="Messages"
                                     onClick={e => toggleMailTab(e)}
                                     className={
@@ -45,11 +46,11 @@ class Sidebar extends Component {
                                             mailTabDisplayed ? "-open" : ""
                                         }`}
                                     />
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
-                                    href="/"
+                                <Link
+                                    to="/archive"
                                     title="Archive"
                                     className={
                                         pathname && pathname === "/archive"
@@ -58,11 +59,11 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Icon icon="fas fa-box" />
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
-                                    href="/"
+                                <Link
+                                    to="/settings"
                                     title="Settings"
                                     className={
                                         pathname && pathname === "/settings"
@@ -71,11 +72,11 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Icon icon="fas fa-cogs" />
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
-                                    href="/"
+                                <Link
+                                    to="/bugs"
                                     title="Report bugs"
                                     className={
                                         pathname && pathname === "/bugs"
@@ -84,7 +85,7 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Icon icon="fas fa-bug" />
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>

@@ -387,8 +387,9 @@ const testMessages = [
 
 const Me = "Prashant";
 
-const Frightbar = () => {
+const Frightbar = ({ match }) => {
     let otherUser = "Nischal Shrestha";
+    console.log(match && match.path ? match.path : "Ok!");
 
     return (
         <div className="frightbar">
@@ -403,9 +404,7 @@ const Frightbar = () => {
                         <Message
                             key={uuidv4()}
                             type={Me}
-                            from={
-                                messageEntry.user === 1 ? otherUser : Me
-                            }
+                            from={messageEntry.user === 1 ? otherUser : Me}
                             timestamp={messageEntry.timestamp}
                             message={messageEntry.message}
                         />
