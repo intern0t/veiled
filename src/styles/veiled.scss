@@ -42,6 +42,11 @@ body {
                 align-items: center;
                 padding: 10px;
 
+                &-active {
+                    background: $BrightGray;
+                    color: $TwilightBlue;
+                }
+
                 li {
                     width: 100%;
 
@@ -89,11 +94,12 @@ body {
                 justify-content: flex-start;
                 @include Font($defaultFontFamily);
                 font-size: $defaultFontSize - 1;
+                color: rgba($BrightGray, 0.7);
 
-                .user-avatar{
+                .user-avatar {
                     margin: 0 10px 0 0;
                 }
-                .tip{
+                .tip {
                     margin: 0 10px;
                 }
             }

@@ -10,8 +10,8 @@ export class AppProvider extends Component {
             }
         },
         displayInformation: {
-            currentPage: "",
-            mailTabDisplayed: true
+            currentPage: "conversations",
+            mailTabDisplayed: false
         }
     };
 
@@ -30,11 +30,12 @@ export class AppProvider extends Component {
 
     render() {
         const { children } = this.props;
+        const { displayInformation } = this.state;
         return (
             <AppContext.Provider
                 value={{
-                    mailTabDisplayed: this.state.displayInformation
-                        .mailTabDisplayed,
+                    currentPage: displayInformation.currentPage,
+                    mailTabDisplayed: displayInformation.mailTabDisplayed,
                     toggleMailTab: this.toggleMailTab
                 }}
             >
