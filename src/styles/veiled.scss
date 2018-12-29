@@ -17,22 +17,19 @@ body {
         width: 100%;
         height: 100%;
         position: absolute;
-        @include Flex(row);
+        @include Flex(column);
         overflow: hidden;
 
-        .sidebar {
-            width: $defaultSidebarWidth;
-            background: $OuterSpace;
-            @include Flex(column);
-            -webkit-box-pack: center;
-            -ms-flex-pack: center;
-            justify-content: center;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            align-items: center;
+        &-wrapper {
+            width: 100%;
+            height: 100%;
+            // position: absolute;
+            @include Flex(row);
+            overflow: hidden;
 
-            &-section {
-                width: 100%;
+            .sidebar {
+                width: $defaultSidebarWidth;
+                background: $OuterSpace;
                 @include Flex(column);
                 -webkit-box-pack: center;
                 -ms-flex-pack: center;
@@ -40,178 +37,227 @@ body {
                 -webkit-box-align: center;
                 -ms-flex-align: center;
                 align-items: center;
-                padding: 10px;
 
-                li {
+                &-section {
                     width: 100%;
-
-                    a,
-                    a:visited {
-                        padding: 20px;
-                        display: block;
-                        text-align: center;
-                        font-size: $defaultFontSize * 1.5;
-                        color: $GullGray;
-                        // border-left: 4px solid transparent;
-                        @include Transition(all, 0.3s);
-
-                        &:hover {
-                            background: $BrightGray;
-                            color: $TwilightBlue;
-                            // border-left: 4px solid $Shakespeare;
-                        }
-                    }
-                }
-            }
-        }
-
-        .brightbar {
-            width: $defaultBrightBarWidth;
-            background: $BrightGray;
-        }
-
-        .frightbar {
-            -webkit-box-flex: 1;
-            -ms-flex: 1;
-            flex: 1;
-            background: $TwilightBlue;
-            @include Flex(column);
-            overflow: hidden;
-
-            &-top {
-                width: 100%;
-                border-bottom: 1px solid rgba($BrightGray, 0.15);
-                padding: 30px;
-                -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
-                box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
-                @include Flex(row);
-                align-items: center;
-                justify-content: flex-start;
-                @include Font($defaultFontFamily);
-                font-size: $defaultFontSize - 1;
-
-                .user-avatar{
-                    margin: 0 10px 0 0;
-                }
-                .tip{
-                    margin: 0 10px;
-                }
-            }
-
-            &-inner {
-                padding: 20px;
-                overflow-x: hidden;
-                overflow: auto;
-
-                .message-entry {
                     @include Flex(column);
-                    -webkit-box-pack: start;
-                    -ms-flex-pack: start;
-                    justify-content: flex-start;
-                    line-height: $defaultFontSize + 25px;
-                    @include BorderRadius(2px, all);
+                    -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                    justify-content: center;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    padding: 10px;
 
-                    .timestamp {
-                        font-size: $defaultFontSize - 3;
+                    &-active {
+                        background: $BrightGray;
+                        color: $TwilightBlue;
                     }
 
-                    div {
-                        @include Flex(row);
-                        -ms-flex-line-pack: center;
-                        align-content: center;
+                    li {
+                        width: 100%;
 
-                        .from {
-                            width: auto;
-                            margin: 0 20px;
-                            font-size: $defaultFontSize - 1;
-                        }
+                        a,
+                        a:visited {
+                            padding: 20px;
+                            display: block;
+                            text-align: center;
+                            font-size: $defaultFontSize * 1.5;
+                            color: $GullGray;
+                            // border-left: 4px solid transparent;
+                            @include Transition(all, 0.3s);
 
-                        .message-wrapper {
-                            @include Flex(column);
-
-                            .message {
-                                font-size: $defaultFontSize - 1;
-                                background: rgba($BrightGray, 0.08);
-                                @include BorderRadius(5px, all);
-                                color: rgba($BrightGray, 0.7);
-                                padding: 0 20px;
-
-                                &-from {
-                                    background: rgba($Shakespeare, 0.15);
-                                }
-
-                                &-you {
-                                    background: rgba($BrightGray, 0.04);
-                                }
+                            &:hover {
+                                background: $BrightGray;
+                                color: $TwilightBlue;
+                                // border-left: 4px solid $Shakespeare;
                             }
                         }
                     }
                 }
             }
 
-            .speakbar {
-                @include Flex(row);
-                -ms-flex-line-pack: center;
-                align-content: center;
-                -webkit-box-align: center;
-                -ms-flex-align: center;
-                align-items: center;
-                padding: 20px;
-                margin: 10px 0;
+            .brightbar {
+                width: $defaultBrightBarWidth;
+                background: $BrightGray;
+            }
 
-                input[type="text"] {
-                    -webkit-box-flex: 1;
-                    -ms-flex: 1;
-                    flex: 1;
-                    outline: 0;
-                    border: 0;
+            .frightbar {
+                -webkit-box-flex: 1;
+                -ms-flex: 1;
+                flex: 1;
+                background: $TwilightBlue;
+                @include Flex(column);
+                overflow: hidden;
+
+                &-top {
+                    width: 100%;
+                    border-bottom: 1px solid rgba($BrightGray, 0.15);
+                    padding: 30px;
+                    -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
+                    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
+                    @include Flex(row);
+                    align-items: center;
+                    justify-content: flex-start;
                     @include Font($defaultFontFamily);
-                    line-height: $defaultFontSize + 5;
-                    font-size: $defaultFontSize - 2;
-                    color: $TwilightBlue;
-                    letter-spacing: 0.3px;
-                    padding: 10px;
-                    background: rgba($BrightGray, 0.9);
-                    @include BorderRadius(3px, all);
+                    font-size: $defaultFontSize - 1;
+                    color: rgba($BrightGray, 0.7);
 
-                    &::-webkit-input-placeholder {
-                        color: $GullGray;
+                    .user-avatar {
+                        margin: 0 10px 0 0;
                     }
-
-                    &:-ms-input-placeholder {
-                        color: $GullGray;
-                    }
-
-                    &::placeholder {
-                        color: $GullGray;
+                    .tip {
+                        margin: 0 10px;
                     }
                 }
 
-                ul {
+                &-inner {
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    padding: 20px 0;
+
+                    .message-entry {
+                        @include Flex(column);
+                        -webkit-box-pack: start;
+                        -ms-flex-pack: start;
+                        justify-content: flex-start;
+                        line-height: $defaultFontSize + 25px;
+                        @include BorderRadius(2px, all);
+                        padding: 0 10px;
+
+                        .timestamp {
+                            font-size: $defaultFontSize - 3;
+                        }
+
+                        div {
+                            @include Flex(row);
+                            -ms-flex-line-pack: center;
+                            align-content: center;
+
+                            .from {
+                                width: auto;
+                                margin: 0 20px;
+                                font-size: $defaultFontSize - 1;
+                            }
+
+                            .message-wrapper {
+                                @include Flex(column);
+
+                                .message {
+                                    font-size: $defaultFontSize - 1;
+                                    background: rgba($BrightGray, 0.08);
+                                    @include BorderRadius(5px, all);
+                                    color: rgba($BrightGray, 0.7);
+                                    padding: 0 20px;
+
+                                    &-from {
+                                        background: rgba($Shakespeare, 0.15);
+                                    }
+
+                                    &-you {
+                                        background: rgba($BrightGray, 0.04);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .speakbar {
                     @include Flex(row);
-                    -webkit-box-pack: start;
-                    -ms-flex-pack: start;
-                    justify-content: flex-start;
                     -ms-flex-line-pack: center;
                     align-content: center;
                     -webkit-box-align: center;
                     -ms-flex-align: center;
                     align-items: center;
-                    padding: 5px;
+                    padding: 20px;
+                    margin: 10px 0;
 
-                    li {
-                        a,
-                        a:visited {
-                            display: block;
-                            padding: 5px 10px;
-                            font-size: $defaultFontSize + 5;
+                    input[type="text"] {
+                        -webkit-box-flex: 1;
+                        -ms-flex: 1;
+                        flex: 1;
+                        outline: 0;
+                        border: 0;
+                        @include Font($defaultFontFamily);
+                        line-height: $defaultFontSize + 5;
+                        font-size: $defaultFontSize - 2;
+                        color: $TwilightBlue;
+                        letter-spacing: 0.3px;
+                        padding: 10px;
+                        background: rgba($BrightGray, 0.9);
+                        @include BorderRadius(3px, all);
+
+                        &::-webkit-input-placeholder {
                             color: $GullGray;
+                        }
 
-                            &:hover {
-                                color: $OuterSpace;
+                        &:-ms-input-placeholder {
+                            color: $GullGray;
+                        }
+
+                        &::placeholder {
+                            color: $GullGray;
+                        }
+                    }
+
+                    ul {
+                        @include Flex(row);
+                        -webkit-box-pack: start;
+                        -ms-flex-pack: start;
+                        justify-content: flex-start;
+                        -ms-flex-line-pack: center;
+                        align-content: center;
+                        -webkit-box-align: center;
+                        -ms-flex-align: center;
+                        align-items: center;
+                        padding: 5px;
+
+                        li {
+                            a,
+                            a:visited {
+                                display: block;
+                                padding: 5px 10px;
+                                font-size: $defaultFontSize + 5;
+                                color: $GullGray;
+
+                                &:hover {
+                                    color: $OuterSpace;
+                                }
                             }
                         }
                     }
+                }
+            }
+        }
+
+        .footer {
+            padding: 9px 20px;
+            overflow: hidden;
+            background: $defaultBackground;
+            @include Font($defaultFontFamily);
+            font-size: $defaultFontSize - 3;
+            letter-spacing: 0.3px;
+            @include Flex(row);
+            justify-content: space-between;
+            align-content: center;
+            align-items: center;
+
+            span {
+                @include Flex(row);
+                justify-content: flex-start;
+                align-items: center;
+
+                b {
+                    margin-left: 7px;
+                    font-weight: bold;
+                }
+
+                a,
+                a:visited {
+                    color: $GullGray;
+                    text-decoration: none;
+                    font-weight: bold;
                 }
             }
         }

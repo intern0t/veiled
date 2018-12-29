@@ -1,65 +1,94 @@
-import React from "react";
+import React, { Component } from "react";
 import Icon from "./Icon";
 import Tip from "./Tip";
+import { Link } from "react-router-dom";
 import { AppConsumer } from "../contexts/AppProvider";
 
-const Sidebar = () => {
-    return (
-        <AppConsumer>
-            {({ mailTabDisplayed, toggleMailTab }) => (
-                <div className="sidebar">
-                    <ul className="sidebar-section">
-                        <li>
-                            <a href="/" title="Conversations">
-                                <Tip updated={true} color={"#55A7D4"} />
-                                <Icon icon="fas fa-comment" />
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/" title="Mail">
-                                <Tip updated={true} />
-                                <Icon
-                                    icon={`fas fa-envelope${
-                                        mailTabDisplayed ? "-open" : ""
-                                    }`}
-                                />
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/" title="Archive">
-                                <Icon icon="fas fa-box" />
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/" title="Settings">
-                                <Icon icon="fas fa-cogs" />
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/" title="Report bugs">
-                                <Icon icon="fas fa-bug" />
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="/"
-                                title={`Turn Brightbar ${
-                                    mailTabDisplayed ? "Off" : "On"
-                                }`}
-                                onClick={e => toggleMailTab(e)}
-                            >
-                                <Icon
-                                    icon={`fas fa-toggle-${
-                                        mailTabDisplayed ? "off" : "on"
-                                    }`}
-                                />
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            )}
-        </AppConsumer>
-    );
-};
+class Sidebar extends Component {
+    render() {
+        return (
+            <AppConsumer>
+                {({ currentPage, toggleMailTab }) => (
+                    <div className="sidebar">
+                        <ul className="sidebar-section">
+                            <li>
+                                <Link
+                                    to="/conversation"
+                                    title="Conversation"
+                                    className={
+                                        (currentPage && currentPage === "/") ||
+                                        currentPage === "/conversation"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Tip updated={true} color={"#55A7D4"} />
+                                    <Icon icon="fas fa-comment-dots" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="#"
+                                    title="Conversations"
+                                    onClick={e => toggleMailTab(e)}
+                                    className={
+                                        currentPage &&
+                                        currentPage === "/conversations"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Tip updated={true} />
+                                    <Icon icon="fas fa-comments" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/archive"
+                                    title="Archive"
+                                    className={
+                                        currentPage &&
+                                        currentPage === "/archive"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Icon icon="fas fa-archive" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/settings"
+                                    title="Settings"
+                                    className={
+                                        currentPage &&
+                                        currentPage === "/settings"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Icon icon="fas fa-cogs" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/bugs"
+                                    title="Report bugs"
+                                    className={
+                                        currentPage && currentPage === "/bugs"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Icon icon="fas fa-bug" />
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                )}
+            </AppConsumer>
+        );
+    }
+}
 
 export default Sidebar;

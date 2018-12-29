@@ -17,6 +17,10 @@ const Message = ({ type, timestamp, message, from }) => {
                         className={`message ${
                             yourMessages ? "message-you" : "message-from"
                         }`}
+                        style={{
+                            marginLeft: yourMessages ? "75px" : "0",
+                            marginRight: !yourMessages ? "75px" : "0"
+                        }}
                     >
                         {message}
                     </span>

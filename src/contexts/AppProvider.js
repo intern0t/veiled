@@ -10,8 +10,8 @@ export class AppProvider extends Component {
             }
         },
         displayInformation: {
-            currentPage: "",
-            mailTabDisplayed: true
+            currentPage: "/conversation",
+            mailTabDisplayed: false
         }
     };
 
@@ -28,14 +28,29 @@ export class AppProvider extends Component {
         }));
     };
 
+    onPageChange = page => {
+        console.log(page);
+        this.setState(state => ({
+            ...state,
+            ...{
+                displayInformation: {
+                    currentPage: page.toLowerCase()
+                }
+            }
+        }));
+    };
+
     render() {
         const { children } = this.props;
+        const { userInformation, displayInformation } = this.state;
         return (
             <AppContext.Provider
                 value={{
-                    mailTabDisplayed: this.state.displayInformation
-                        .mailTabDisplayed,
-                    toggleMailTab: this.toggleMailTab
+                    currentPage: displayInformation.currentPage,
+                    mailTabDisplayed: displayInformation.mailTabDisplayed,
+                    userInformation: userInformation.user,
+                    toggleMailTab: this.toggleMailTab,
+                    onPageChange: this.onPageChange
                 }}
             >
                 {children}
