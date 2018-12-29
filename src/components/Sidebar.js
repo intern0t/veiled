@@ -6,46 +6,42 @@ import { AppConsumer } from "../contexts/AppProvider";
 
 class Sidebar extends Component {
     render() {
-        // const { pathname } = this.props.location;
-        const pathname = "/";
+        let pathname = this.props.page;
 
         return (
             <AppConsumer>
-                {({ mailTabDisplayed, toggleMailTab }) => (
+                {({ currentPage, toggleMailTab }) => (
                     <div className="sidebar">
                         <ul className="sidebar-section">
                             <li>
                                 <Link
-                                    to="/"
-                                    title="Conversations"
+                                    to="/conversation"
+                                    title="Conversation"
                                     className={
-                                        (pathname && pathname === "/") ||
-                                        pathname === "conversations"
+                                        (currentPage && currentPage === "/") ||
+                                        currentPage === "conversation"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
                                 >
                                     <Tip updated={true} color={"#55A7D4"} />
-                                    <Icon icon="fas fa-comment" />
+                                    <Icon icon="fas fa-comment-dots" />
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="/messages"
-                                    title="Messages"
+                                    to="/conversations"
+                                    title="Conversations"
                                     onClick={e => toggleMailTab(e)}
                                     className={
-                                        pathname && pathname === "/messages"
+                                        pathname &&
+                                        pathname === "/conversations"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
                                 >
                                     <Tip updated={true} />
-                                    <Icon
-                                        icon={`fas fa-envelope${
-                                            mailTabDisplayed ? "-open" : ""
-                                        }`}
-                                    />
+                                    <Icon icon="fas fa-comments" />
                                 </Link>
                             </li>
                             <li>
@@ -58,7 +54,7 @@ class Sidebar extends Component {
                                             : ""
                                     }
                                 >
-                                    <Icon icon="fas fa-box" />
+                                    <Icon icon="fas fa-archive" />
                                 </Link>
                             </li>
                             <li>

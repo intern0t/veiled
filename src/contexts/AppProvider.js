@@ -28,15 +28,30 @@ export class AppProvider extends Component {
         }));
     };
 
+    onPageChange = page => {
+        let parsedPage = page.toLowerCase();
+        // console.log(page, parsedPage);
+        this.setState(state => ({
+            ...state,
+            ...{
+                displayInformation: {
+                    currentPage: parsedPage
+                }
+            }
+        }));
+    };
+
     render() {
         const { children } = this.props;
-        const { displayInformation } = this.state;
+        const { userInformation, displayInformation } = this.state;
         return (
             <AppContext.Provider
                 value={{
                     currentPage: displayInformation.currentPage,
                     mailTabDisplayed: displayInformation.mailTabDisplayed,
-                    toggleMailTab: this.toggleMailTab
+                    userInformation: userInformation.user,
+                    toggleMailTab: this.toggleMailTab,
+                    onPageChange: this.onPageChange
                 }}
             >
                 {children}
