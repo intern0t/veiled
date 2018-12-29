@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import uuidv4 from "uuid/v4";
 import Message from "../Message";
 import UserAvatar from "../UserAvatar";
@@ -79,9 +79,8 @@ const testMessages = [
     }
 ];
 
-const Conversation = ({ page, onPageChange }) => {
+const Conversation = () => {
     let otherUser = "Nischal Shrestha";
-    // onPageChange(page);
 
     return (
         <AppConsumer>

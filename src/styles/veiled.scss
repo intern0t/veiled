@@ -112,9 +112,9 @@ body {
                 }
 
                 &-inner {
-                    // padding: 20px;
-                    // overflow-x: hidden;
-                    overflow: auto;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    padding: 20px 0;
 
                     .message-entry {
                         @include Flex(column);

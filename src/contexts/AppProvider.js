@@ -10,7 +10,7 @@ export class AppProvider extends Component {
             }
         },
         displayInformation: {
-            currentPage: "conversations",
+            currentPage: "/conversation",
             mailTabDisplayed: false
         }
     };
@@ -29,13 +29,12 @@ export class AppProvider extends Component {
     };
 
     onPageChange = page => {
-        let parsedPage = page.toLowerCase();
-        // console.log(page, parsedPage);
+        console.log(page);
         this.setState(state => ({
             ...state,
             ...{
                 displayInformation: {
-                    currentPage: parsedPage
+                    currentPage: page.toLowerCase()
                 }
             }
         }));

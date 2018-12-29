@@ -9,88 +9,73 @@ import Archive from "../components/pages/Archive";
 import { AppProvider, AppConsumer } from "../contexts/AppProvider";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Footer from "../components/Footer";
+import PageWrapper from "../components/pages/PageWrapper";
 
 const ApplicationRouter = () => {
     return (
         <BrowserRouter>
             <AppProvider>
-                <AppConsumer>
-                    {({ onPageChange }) => {
-                        return (
-                            <div className="main-container">
-                                <div className="main-container-wrapper">
-                                    <Sidebar />
-                                    <Brightbar />
-                                    <Switch>
-                                        <Route
-                                            exact
-                                            path="/"
-                                            component={props => (
-                                                <Frightbar {...props}>
-                                                    <Conversation
-                                                        page={"conversation"}
-                                                        onPageChange={
-                                                            onPageChange
-                                                        }
-                                                    />
-                                                </Frightbar>
-                                            )}
-                                        />
-                                        <Route
-                                            path="/conversation"
-                                            component={props => {
-                                                return (
-                                                    <Frightbar {...props}>
-                                                        <Conversation
-                                                            page={
-                                                                "conversation"
-                                                            }
-                                                            onPageChange={
-                                                                onPageChange
-                                                            }
-                                                        />
-                                                    </Frightbar>
-                                                );
-                                            }}
-                                        />
-                                        {/* <Route path="/conversations" component={Frightbar} /> */}
-                                        <Route
-                                            path="/archive"
-                                            component={props => (
-                                                <Frightbar {...props}>
-                                                    <Archive page={"archive"} />
-                                                </Frightbar>
-                                            )}
-                                        />
-                                        <Route
-                                            path="/settings"
-                                            component={props => {
-                                                return (
-                                                    <Frightbar {...props}>
-                                                        <Settings
-                                                            page={"Settings"}
-                                                        />
-                                                    </Frightbar>
-                                                );
-                                            }}
-                                        />
-                                        <Route
-                                            path="/bugs"
-                                            component={props => {
-                                                return (
-                                                    <Frightbar {...props}>
-                                                        <Bugs page={"Bugs"} />
-                                                    </Frightbar>
-                                                );
-                                            }}
-                                        />
-                                    </Switch>
-                                </div>
-                                <Footer />
-                            </div>
-                        );
-                    }}
-                </AppConsumer>
+                <div className="main-container">
+                    <div className="main-container-wrapper">
+                        <Sidebar />
+                        <Brightbar />
+                        <Frightbar>
+                            <Switch>
+                                <Route
+                                    exact
+                                    path="/"
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <Conversation />
+                                        </PageWrapper>
+                                    )}
+                                />
+                                <Route
+                                    exact
+                                    path="/conversation"
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <Conversation />
+                                        </PageWrapper>
+                                    )}
+                                />
+                                {/* <Route path="/conversations" component={Frightbar} /> */}
+                                <Route
+                                    exact
+                                    path="/archive"
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <Archive {...props} />
+                                        </PageWrapper>
+                                    )}
+                                />
+                                <Route
+                                    exact
+                                    path="/settings"
+                                    component={props => {
+                                        return (
+                                            <PageWrapper {...props}>
+                                                <Settings {...props} />
+                                            </PageWrapper>
+                                        );
+                                    }}
+                                />
+                                <Route
+                                    exact
+                                    path="/bugs"
+                                    component={props => {
+                                        return (
+                                            <PageWrapper {...props}>
+                                                <Bugs {...props} />
+                                            </PageWrapper>
+                                        );
+                                    }}
+                                />
+                            </Switch>
+                        </Frightbar>
+                    </div>
+                    <Footer />
+                </div>
             </AppProvider>
         </BrowserRouter>
     );

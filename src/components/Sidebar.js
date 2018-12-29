@@ -6,8 +6,6 @@ import { AppConsumer } from "../contexts/AppProvider";
 
 class Sidebar extends Component {
     render() {
-        let pathname = this.props.page;
-
         return (
             <AppConsumer>
                 {({ currentPage, toggleMailTab }) => (
@@ -19,7 +17,7 @@ class Sidebar extends Component {
                                     title="Conversation"
                                     className={
                                         (currentPage && currentPage === "/") ||
-                                        currentPage === "conversation"
+                                        currentPage === "/conversation"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
@@ -30,12 +28,12 @@ class Sidebar extends Component {
                             </li>
                             <li>
                                 <Link
-                                    to="/conversations"
+                                    to="#"
                                     title="Conversations"
                                     onClick={e => toggleMailTab(e)}
                                     className={
-                                        pathname &&
-                                        pathname === "/conversations"
+                                        currentPage &&
+                                        currentPage === "/conversations"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
@@ -49,7 +47,8 @@ class Sidebar extends Component {
                                     to="/archive"
                                     title="Archive"
                                     className={
-                                        pathname && pathname === "/archive"
+                                        currentPage &&
+                                        currentPage === "/archive"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
@@ -62,7 +61,8 @@ class Sidebar extends Component {
                                     to="/settings"
                                     title="Settings"
                                     className={
-                                        pathname && pathname === "/settings"
+                                        currentPage &&
+                                        currentPage === "/settings"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
@@ -75,7 +75,7 @@ class Sidebar extends Component {
                                     to="/bugs"
                                     title="Report bugs"
                                     className={
-                                        pathname && pathname === "/bugs"
+                                        currentPage && currentPage === "/bugs"
                                             ? "sidebar-section-active"
                                             : ""
                                     }
