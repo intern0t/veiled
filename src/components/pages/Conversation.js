@@ -2,6 +2,7 @@ import React from "react";
 import uuidv4 from "uuid/v4";
 import Tip from "../Tip";
 import Icon from "../Icon";
+import Modal from "../Modal";
 import Message from "../Message";
 import SpeakBar from "../SpeakBar";
 import UserAvatar from "../UserAvatar";
@@ -85,7 +86,11 @@ const Conversation = () => {
 
     return (
         <AppConsumer>
-            {({ userInformation }) => {
+            {({
+                conSettingsModalDisplayed,
+                toggleConSettingsModal,
+                userInformation
+            }) => {
                 return (
                     <div className="frightbar">
                         <div className="frightbar-top">
@@ -100,8 +105,16 @@ const Conversation = () => {
                             </div>
                             <div>
                                 <Icon
+                                    icon={"fas fa-link"}
+                                    title="Share conversation"
+                                    style={{ cursor: "pointer" }}
+                                />
+
+                                <Icon
                                     icon={"fas fa-cog"}
                                     title={"Conversation Settings"}
+                                    onClick={e => toggleConSettingsModal(e)}
+                                    style={{ cursor: "pointer" }}
                                 />
                             </div>
                         </div>
@@ -128,10 +141,81 @@ const Conversation = () => {
                             })}
                         </div>
                         <SpeakBar />
+                        <Modal
+                            style={{
+                                display:
+                                    conSettingsModalDisplayed &&
+                                    conSettingsModalDisplayed === true
+                                        ? "flex"
+                                        : "none"
+                            }}
+                        >
+                            <ConversationSettings
+                                close={toggleConSettingsModal}
+                            />
+                        </Modal>
                     </div>
                 );
             }}
         </AppConsumer>
+    );
+};
+
+const ConversationSettings = ({ close }) => {
+    return (
+        <div
+            className="modal-container"
+            onClick={e => {
+                return false;
+            }}
+        >
+            <div>
+                <Icon icon="fas fa-exclamation" color={"#F36060"} />{" "}
+                <span>
+                    You are updating or editing settings for Conversation ID -{" "}
+                    <b>3DRFT&GY*</b>.
+                </span>
+            </div>
+            <form
+                onSubmit={e => {
+                    e.preventDefault();
+                }}
+            >
+                <div>
+                    <div>
+                        <label htmlFor="private-key">Display Name</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            name="private-key"
+                            className="text-input"
+                            placeholder="Display name for this conversation."
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label htmlFor="private-key">Private Key</label>
+                    </div>
+                    <div>
+                        <input
+                            type="password"
+                            className="text-input"
+                            name="private-key"
+                            placeholder="Used to encrypt and decrypt messages."
+                        />
+                    </div>
+                </div>
+                <div className="buttons-wrapper">
+                    <button className="button" onClick={close}>
+                        Close
+                    </button>
+                    <button className="button quest">Leave Conversation</button>
+                    <button className="button inform">Update</button>
+                </div>
+            </form>
+        </div>
     );
 };
 

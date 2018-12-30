@@ -11,31 +11,56 @@ export class AppProvider extends Component {
         },
         displayInformation: {
             currentPage: "/conversation",
-            mailTabDisplayed: true
+            mailTabDisplayed: true,
+            conversationSettingsModalDisplayed: false,
+            newConversationModalDisplayed: false
         }
     };
 
     toggleMailTab = e => {
         e.preventDefault();
-        const { displayInformation } = this.state;
+
         this.setState(state => ({
             ...state,
-            ...{
-                displayInformation: {
-                    mailTabDisplayed: !displayInformation.mailTabDisplayed
-                }
+            displayInformation: {
+                ...state.displayInformation,
+                mailTabDisplayed: !state.displayInformation.mailTabDisplayed
+            }
+        }));
+    };
+
+    toggleConversationSettingsModal = e => {
+        e.preventDefault();
+        this.setState(prevState => ({
+            ...prevState,
+            displayInformation: {
+                ...prevState.displayInformation,
+                conversationSettingsModalDisplayed: !prevState
+                    .displayInformation.conversationSettingsModalDisplayed
+            }
+        }));
+    };
+
+    toggleNewConversationModal = e => {
+        e.preventDefault();
+        this.setState(prevState => ({
+            ...prevState,
+            displayInformation: {
+                ...prevState.displayInformation,
+                newConversationModalDisplayed: !prevState.displayInformation
+                    .newConversationModalDisplayed
             }
         }));
     };
 
     onPageChange = page => {
-        let newStateUpdate = {
+        this.setState(prevState => ({
+            ...prevState,
             displayInformation: {
+                ...prevState.displayInformation,
                 currentPage: page
             }
-        };
-        let currentState = Object.assign({}, this.state, newStateUpdate);
-        this.setState(currentState);
+        }));
     };
 
     render() {
@@ -47,8 +72,15 @@ export class AppProvider extends Component {
                     currentPage: displayInformation.currentPage,
                     mailTabDisplayed: displayInformation.mailTabDisplayed,
                     userInformation: userInformation.user,
+                    conSettingsModalDisplayed:
+                        displayInformation.conversationSettingsModalDisplayed,
+                    newConModalDisplayed:
+                        displayInformation.newConversationModalDisplayed,
                     toggleMailTab: this.toggleMailTab,
-                    onPageChange: this.onPageChange
+                    onPageChange: this.onPageChange,
+                    toggleConSettingsModal: this
+                        .toggleConversationSettingsModal,
+                    toggleNewConModal: this.toggleNewConversationModal
                 }}
             >
                 {children}
