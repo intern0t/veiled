@@ -6,7 +6,7 @@ import Conversation from "../components/pages/Conversation";
 import Settings from "../components/pages/Settings";
 import Bugs from "../components/pages/Bugs";
 import Archive from "../components/pages/Archive";
-import { AppProvider, AppConsumer } from "../contexts/AppProvider";
+import { AppProvider } from "../contexts/AppProvider";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Footer from "../components/Footer";
 import PageWrapper from "../components/pages/PageWrapper";

@@ -6,12 +6,12 @@ export class AppProvider extends Component {
     state = {
         userInformation: {
             user: {
-                displayName: "Prashant Shrestha"
+                displayName: "Synonymous"
             }
         },
         displayInformation: {
             currentPage: "/conversation",
-            mailTabDisplayed: false
+            mailTabDisplayed: true
         }
     };
 
@@ -29,15 +29,13 @@ export class AppProvider extends Component {
     };
 
     onPageChange = page => {
-        console.log(page);
-        this.setState(state => ({
-            ...state,
-            ...{
-                displayInformation: {
-                    currentPage: page.toLowerCase()
-                }
+        let newStateUpdate = {
+            displayInformation: {
+                currentPage: page
             }
-        }));
+        };
+        let currentState = Object.assign({}, this.state, newStateUpdate);
+        this.setState(currentState);
     };
 
     render() {

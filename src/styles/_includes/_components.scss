@@ -26,6 +26,7 @@
 
 .user-avatar {
     $userAvatarDimensions: 35px;
+    min-width: $userAvatarDimensions;
     width: $userAvatarDimensions;
     height: $userAvatarDimensions;
     @include BorderRadius(50%, all);
@@ -35,6 +36,7 @@
     align-content: center;
     align-items: center;
     justify-content: center;
+    text-align: center;
 
     span {
         @include Font($defaultFontFamily);
@@ -50,4 +52,27 @@
     position: relative;
     float: right;
     margin: -$defaultTipDimension 0 0 -$defaultTipDimension;
+}
+
+.tip-counter {
+    @include Flex(row);
+    padding: 3px 5px;
+    @include Font($defaultFontFamily);
+    font-size: $defaultFontSize - 3;
+    color: $AquaHaze;
+    @include BorderRadius(3px, all);
+    text-align: center;
+    margin-left: 3px;
+    letter-spacing: 0.5px;
+}
+
+.text-input {
+    background: rgba($OuterSpace, 1);
+    outline: 0;
+    border: 0;
+    padding: 7px 15px;
+    @include BorderRadius(20px, all);
+    color: $defaultForeground;
+    @include Font($defaultFontFamily);
+    font-size: $defaultFontSize - 1;
 }
