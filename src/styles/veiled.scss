@@ -80,6 +80,70 @@ body {
             .brightbar {
                 width: $defaultBrightBarWidth;
                 background: $BrightGray;
+                @include Flex(column);
+                justify-content: flex-start;
+
+                &-search {
+                    @include Flex(row);
+                    justify-content: center;
+                    align-content: center;
+                    align-items: center;
+                    padding: 20px;
+                    border-bottom: 1px solid $defaultBackground;
+
+                    .fas {
+                        margin-left: 15px;
+                        cursor: pointer;
+
+                        &:hover{
+                            color: $TwilightBlue;
+                        }
+                    }
+                }
+
+                &-conversations {
+                    li {
+                        margin: 0;
+
+                        .brightbar-conversations-entry {
+                            @include Flex(row);
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 15px;
+                            @include Transition(background, 0.2s);
+
+                            &:hover {
+                                cursor: pointer;
+                                background: rgba($GullGray, 0.1);
+                            }
+
+                            &-message {
+                                margin-left: 10px;
+                                @include Flex(column);
+                                justify-content: flex-start;
+                                align-content: center;
+
+                                h1 {
+                                    margin-bottom: 5px;
+                                    color: rgba($defaultForeground, 0.5);
+                                    letter-spacing: 0.2px;
+                                }
+
+                                p {
+                                    font-size: $defaultFontSize - 1;
+                                    text-overflow: ellipsis;
+                                    overflow: hidden;
+                                    display: -webkit-box;
+                                    -webkit-box-orient: vertical;
+                                    -webkit-line-clamp: 1;
+                                    line-height: $defaultFontSize;
+                                    max-height: ($defaultFontSize - 1) * 1.1;
+                                    color: rgba($defaultForeground, 0.8);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             .frightbar {
@@ -91,23 +155,31 @@ body {
                 overflow: hidden;
 
                 &-top {
-                    width: 100%;
                     border-bottom: 1px solid rgba($BrightGray, 0.15);
-                    padding: 30px;
+                    padding: 25px;
                     -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
                     box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.07);
                     @include Flex(row);
                     align-items: center;
-                    justify-content: flex-start;
+                    justify-content: space-between;
                     @include Font($defaultFontFamily);
                     font-size: $defaultFontSize - 1;
                     color: rgba($BrightGray, 0.7);
 
-                    .user-avatar {
-                        margin: 0 10px 0 0;
-                    }
-                    .tip {
-                        margin: 0 10px;
+                    div {
+                        @include Flex(row);
+                        align-items: center;
+                        align-content: center;
+
+                        .user-avatar {
+                            margin: 0 10px 0 0;
+                        }
+                        .tip {
+                            margin: 0 10px;
+                        }
+                        .fas {
+                            cursor: pointer;
+                        }
                     }
                 }
 
@@ -185,7 +257,7 @@ body {
                         color: $TwilightBlue;
                         letter-spacing: 0.3px;
                         padding: 10px;
-                        background: rgba($BrightGray, 0.9);
+                        background: rgba($BrightGray, 1);
                         @include BorderRadius(3px, all);
 
                         &::-webkit-input-placeholder {
@@ -219,10 +291,10 @@ body {
                                 display: block;
                                 padding: 5px 10px;
                                 font-size: $defaultFontSize + 5;
-                                color: $GullGray;
+                                color: $BrightGray;
 
                                 &:hover {
-                                    color: $OuterSpace;
+                                    color: $GullGray;
                                 }
                             }
                         }

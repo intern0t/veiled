@@ -1,10 +1,11 @@
 import React from "react";
 import uuidv4 from "uuid/v4";
-import Message from "../Message";
-import UserAvatar from "../UserAvatar";
 import Tip from "../Tip";
-import { AppConsumer } from "../../contexts/AppProvider";
+import Icon from "../Icon";
+import Message from "../Message";
 import SpeakBar from "../SpeakBar";
+import UserAvatar from "../UserAvatar";
+import { AppConsumer } from "../../contexts/AppProvider";
 
 const testMessages = [
     {
@@ -80,7 +81,7 @@ const testMessages = [
 ];
 
 const Conversation = () => {
-    let otherUser = "Nischal Shrestha";
+    let otherUser = "Anonymous";
 
     return (
         <AppConsumer>
@@ -88,13 +89,21 @@ const Conversation = () => {
                 return (
                     <div className="frightbar">
                         <div className="frightbar-top">
-                            <UserAvatar username={otherUser} />
-                            {otherUser}
-                            <Tip
-                                updated={true}
-                                color="#82D455"
-                                title={"Online"}
-                            />
+                            <div>
+                                <UserAvatar username={otherUser} />
+                                {otherUser}
+                                <Tip
+                                    updated={true}
+                                    color="#82D455"
+                                    title={"Online"}
+                                />
+                            </div>
+                            <div>
+                                <Icon
+                                    icon={"fas fa-cog"}
+                                    title={"Conversation Settings"}
+                                />
+                            </div>
                         </div>
                         <div className="frightbar-inner">
                             {testMessages.map(messageEntry => {
