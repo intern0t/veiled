@@ -166,6 +166,10 @@ body {
                     font-size: $defaultFontSize - 1;
                     color: rgba($BrightGray, 0.7);
 
+                    .fas{
+                        margin: 0 10px;
+                    }
+
                     div {
                         @include Flex(row);
                         align-items: center;
