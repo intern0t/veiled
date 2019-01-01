@@ -7,6 +7,7 @@ import Message from "../Message";
 import SpeakBar from "../SpeakBar";
 import UserAvatar from "../UserAvatar";
 import { AppConsumer } from "../../contexts/AppProvider";
+import { ConversationConsumer } from "../../contexts/Conversation.context";
 
 class Conversation extends Component {
     state = {
@@ -18,7 +19,7 @@ class Conversation extends Component {
 
     componentDidMount() {
         const { match } = this.props;
-        const { changeActiveRoom } = this.context;
+        const { changeActiveRoom } = ConversationConsumer;
         if (match && match.params && match.params.roomid) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
@@ -61,110 +62,17 @@ class Conversation extends Component {
     };
 
     render() {
-        let otherUser = "Anonymous";
+        let otherUser = "HiLow?";
         return (
             <AppConsumer>
-                {({
-                    conSettingsModalDisplayed,
-                    toggleConSettingsModal,
-                    userInformation,
-                    rooms,
-                    activeRoomID,
-                    messages
-                }) => {
-                    let theRoom = rooms.filter(
-                        room => room.rid === activeRoomID
-                    );
-
-                    return (
-                        <div className="frightbar">
-                            <div className="frightbar-top">
-                                <div>
-                                    <UserAvatar
-                                        username={
-                                            theRoom &&
-                                            theRoom.length > 0 &&
-                                            theRoom[0].note
-                                                ? theRoom[0].note
-                                                : otherUser
-                                        }
-                                    />
-                                    {theRoom &&
-                                    theRoom.length > 0 &&
-                                    theRoom[0].note
-                                        ? `${theRoom[0].note} `
-                                        : otherUser}
-                                    <Tip
-                                        updated={true}
-                                        color="#82D455"
-                                        title={"Online"}
-                                    />
-                                </div>
-                                <div>
-                                    <Icon
-                                        icon={"fas fa-link"}
-                                        title="Share conversation"
-                                        style={{ cursor: "pointer" }}
-                                    />
-
-                                    <Icon
-                                        icon={"fas fa-cog"}
-                                        title={"Conversation Settings"}
-                                        onClick={e => toggleConSettingsModal(e)}
-                                        style={{ cursor: "pointer" }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="frightbar-inner">
-                                {messages
-                                    .filter(
-                                        messageEntry =>
-                                            messageEntry.roomid === activeRoomID
-                                    )
-                                    .map(messageEntry => {
-                                        return (
-                                            <Message
-                                                key={uuidv4()}
-                                                type={
-                                                    userInformation.displayName &&
-                                                    userInformation.displayName
-                                                        ? userInformation.displayName
-                                                        : "Undefined"
-                                                }
-                                                from={
-                                                    messageEntry &&
-                                                    messageEntry.sender
-                                                        ? messageEntry.sender
-                                                        : "Anonymous"
-                                                }
-                                                timestamp={messageEntry.date}
-                                                message={messageEntry.message}
-                                            />
-                                        );
-                                    })}
-                            </div>
-                            <SpeakBar
-                                _onChange={this.onSpeakBarType}
-                                _onSpeak={this.onSpeak}
-                                message={this.state.currentRoom.message}
-                            />
-                            <Modal
-                                style={{
-                                    display:
-                                        conSettingsModalDisplayed &&
-                                        conSettingsModalDisplayed === true
-                                            ? "flex"
-                                            : "none"
-                                }}
-                            >
-                                <ConversationSettings
-                                    close={toggleConSettingsModal}
-                                    rid={activeRoomID}
-                                />
-                            </Modal>
-                        </div>
-                    );
-                }}
+                {({ userInformation }) => (
+                    <ConversationConsumer>
+                        {({ activeRoomID }) => {
+                            console.log(activeRoomID, userInformation);
+                            return <div>{activeRoomID}</div>;
+                        }}
+                    </ConversationConsumer>
+                )}
             </AppConsumer>
         );
     }
@@ -228,5 +136,4 @@ const ConversationSettings = ({ close, rid }) => {
     );
 };
 
-Conversation.contextType = AppConsumer;
 export default Conversation;

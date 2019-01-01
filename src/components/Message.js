@@ -18,8 +18,8 @@ const Message = ({ type, timestamp, message, from }) => {
                             yourMessages ? "message-you" : "message-from"
                         }`}
                         style={{
-                            marginLeft: yourMessages ? "75px" : "0",
-                            marginRight: !yourMessages ? "75px" : "0"
+                            marginLeft: yourMessages ? "50px" : "0",
+                            marginRight: !yourMessages ? "30px" : "0"
                         }}
                     >
                         {message}

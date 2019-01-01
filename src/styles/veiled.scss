@@ -226,7 +226,9 @@ body {
                                     background: rgba($BrightGray, 0.08);
                                     @include BorderRadius(5px, all);
                                     color: rgba($BrightGray, 0.7);
-                                    padding: 0 20px;
+                                    padding: 5px 20px;
+                                    line-height: $defaultFontSize * 2.3;
+
 
                                     &-from {
                                         background: rgba($Shakespeare, 0.15);
