@@ -1,3 +1,5 @@
+import uuidv4 from "uuid/v4";
+
 const generateRandomColorCode = () => {
     return (
         "#" +
@@ -7,4 +9,8 @@ const generateRandomColorCode = () => {
     );
 };
 
-export { generateRandomColorCode };
+const generateRoomID = () => {
+    return `r-${uuidv4().split("-")[0]}`;
+};
+
+export { generateRandomColorCode, generateRoomID };

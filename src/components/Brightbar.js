@@ -1,26 +1,26 @@
 import React, { Component } from "react";
-import UserAvatar from "./UserAvatar";
+import uuidv4 from "uuid/v4";
 import Icon from "./Icon";
 import Modal from "./Modal";
-import { generateRandomColorCode } from "../contexts/Library";
-import { AppConsumer } from "../contexts/AppProvider";
 import TipCounter from "./TipCounter";
+import UserAvatar from "./UserAvatar";
+import { generateRandomColorCode } from "../contexts/Library";
+import { BrowserRouter as Router, Link } from "react-router-dom";
+import { AppConsumer } from "../contexts/AppProvider";
 
 class Brightbar extends Component {
     render() {
-        const testConversation = {
-            from: "Anonymous",
-            lastMessage:
-                "Finish up with the design so we can implement socket.io",
-            newMessages: 14
-        };
-
         return (
             <AppConsumer>
                 {({
                     mailTabDisplayed,
                     toggleNewConModal,
-                    newConModalDisplayed
+                    newConModalDisplayed,
+                    generatedRoomID,
+                    generateRoomID,
+                    rooms,
+                    activeRoomID,
+                    changeActiveRoom
                 }) => (
                     <div
                         className="brightbar"
@@ -33,21 +33,17 @@ class Brightbar extends Component {
                     >
                         <ConversationSearch toggle={toggleNewConModal} />
                         <ul className="brightbar-conversations">
-                            <li>
-                                <ConversationEntry
-                                    conversation={testConversation}
-                                />
-                            </li>
-                            <li>
-                                <ConversationEntry
-                                    conversation={testConversation}
-                                />
-                            </li>
-                            <li>
-                                <ConversationEntry
-                                    conversation={testConversation}
-                                />
-                            </li>
+                            {rooms && rooms.length > 0
+                                ? rooms.map(room => {
+                                      return (
+                                          <ConversationEntry
+                                              room={room}
+                                              key={uuidv4()}
+                                              _changeRoom={changeActiveRoom}
+                                          />
+                                      );
+                                  })
+                                : null}
                         </ul>
 
                         <Modal
@@ -55,7 +51,11 @@ class Brightbar extends Component {
                                 display: newConModalDisplayed ? "flex" : "none"
                             }}
                         >
-                            <AddNewConversation close={toggleNewConModal} />
+                            <AddNewConversation
+                                close={toggleNewConModal}
+                                generate={generateRoomID}
+                                generated={generatedRoomID}
+                            />
                         </Modal>
                     </div>
                 )}
@@ -82,24 +82,30 @@ const ConversationSearch = ({ toggle }) => {
     );
 };
 
-const ConversationEntry = ({ conversation }) => {
+const ConversationEntry = ({ room, _changeRoom }) => {
     let colorCode = generateRandomColorCode();
+    let newMessages = 11;
     return (
-        <div className="brightbar-conversations-entry">
-            <UserAvatar username={conversation.from} />
-            <div className="brightbar-conversations-entry-message">
-                <h1>{conversation.from}</h1>
-                <p>{conversation.lastMessage}</p>
-            </div>
-            <TipCounter
-                color={colorCode}
-                newMessages={conversation.newMessages}
-            />
-        </div>
+        <Router>
+            <li>
+                <Link
+                    to={`/veiled/${room.rid}`}
+                    onClick={e => _changeRoom(room.rid)}
+                    className="brightbar-conversations-entry"
+                >
+                    <UserAvatar username={room.note} />
+                    <div className="brightbar-conversations-entry-message">
+                        <h1>{room.note ? room.note : "Anonymous"}</h1>
+                        <p>{`Your conversation with ${room.note}..`}</p>
+                    </div>
+                    <TipCounter color={colorCode} newMessages={newMessages} />
+                </Link>
+            </li>
+        </Router>
     );
 };
 
-const AddNewConversation = ({ close }) => {
+const AddNewConversation = ({ close, generate, generated }) => {
     return (
         <div
             className="modal-container"
@@ -108,7 +114,7 @@ const AddNewConversation = ({ close }) => {
             }}
         >
             <div>
-                <Icon icon="fas fa-plus" color={"#F36060"} />{" "}
+                <Icon icon="fas fa-plus" color={"#F36060"} />
                 <span>
                     Adding or creating a new conversation room is simple.
                 </span>
@@ -128,6 +134,17 @@ const AddNewConversation = ({ close }) => {
                             name="private-key"
                             className="text-input"
                             placeholder="Generated Room ID for your room."
+                            value={generated}
+                            readOnly
+                        />
+                        <Icon
+                            icon="fas fa-sync"
+                            onClick={generate}
+                            style={{
+                                cursor: "pointer",
+                                margin: "0 10px",
+                                color: "#0092FF"
+                            }}
                         />
                     </div>
                 </div>

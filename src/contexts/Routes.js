@@ -31,6 +31,14 @@ const ApplicationRouter = () => {
                                     )}
                                 />
                                 <Route
+                                    path="/veiled/:roomid"
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <Conversation {...props} />
+                                        </PageWrapper>
+                                    )}
+                                />
+                                <Route
                                     exact
                                     path="/conversation"
                                     component={props => (

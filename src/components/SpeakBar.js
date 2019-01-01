@@ -1,10 +1,16 @@
 import React from "react";
 import Icon from "./Icon";
 
-const SpeakBar = () => {
+const SpeakBar = ({ _onChange, _onSpeak, message }) => {
     return (
         <div className="speakbar">
-            <input type="text" placeholder="Type your message here .." />
+            <input
+                onChange={e => _onChange(e)}
+                onKeyDown={e => _onSpeak(e)}
+                type="text"
+                placeholder="Type your message here .."
+                value={message}
+            />
             <ul>
                 <li>
                     <a href="/">

@@ -95,7 +95,7 @@ body {
                         margin-left: 15px;
                         cursor: pointer;
 
-                        &:hover{
+                        &:hover {
                             color: $TwilightBlue;
                         }
                     }
@@ -111,6 +111,7 @@ body {
                             align-items: center;
                             padding: 15px;
                             @include Transition(background, 0.2s);
+                            text-decoration: none;
 
                             &:hover {
                                 cursor: pointer;
@@ -166,7 +167,7 @@ body {
                     font-size: $defaultFontSize - 1;
                     color: rgba($BrightGray, 0.7);
 
-                    .fas{
+                    .fas {
                         margin: 0 10px;
                     }
 
@@ -191,6 +192,7 @@ body {
                     overflow-y: auto;
                     overflow-x: hidden;
                     padding: 20px 0;
+                    flex: 1;
 
                     .message-entry {
                         @include Flex(column);
