@@ -6,6 +6,7 @@ import Modal from "../Modal";
 import Message from "../Message";
 import SpeakBar from "../SpeakBar";
 import UserAvatar from "../UserAvatar";
+import { copyToClipboard } from "../../contexts/Library";
 import { AppConsumer } from "../../contexts/AppProvider";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
@@ -61,7 +62,7 @@ class Conversation extends Component {
     };
 
     render() {
-        let otherUser = "Empty User";
+        let otherUser = "You";
 
         return (
             <AppConsumer>
@@ -82,6 +83,15 @@ class Conversation extends Component {
 
                                 return (
                                     <div className="frightbar">
+                                        <input
+                                            type="text"
+                                            id="toCopyURL"
+                                            value={
+                                                activeRoomID ? activeRoomID : ""
+                                            }
+                                            readOnly
+                                            hidden
+                                        />
                                         <div className="frightbar-top">
                                             <div>
                                                 <UserAvatar
@@ -108,6 +118,7 @@ class Conversation extends Component {
                                                 <Icon
                                                     icon={"fas fa-link"}
                                                     title="Share conversation"
+                                                    onClick={copyToClipboard}
                                                     style={{
                                                         cursor: "pointer"
                                                     }}
@@ -189,6 +200,15 @@ class Conversation extends Component {
                                                     toggleConversationSettingsModal
                                                 }
                                                 rid={activeRoomID}
+                                                me={
+                                                    userInformation &&
+                                                    userInformation.user &&
+                                                    userInformation.user
+                                                        .displayName
+                                                        ? userInformation.user
+                                                              .displayName
+                                                        : otherUser
+                                                }
                                             />
                                         </Modal>
                                     </div>
@@ -202,7 +222,7 @@ class Conversation extends Component {
     }
 }
 
-const ConversationSettings = ({ close, rid }) => {
+const ConversationSettings = ({ me, close, rid }) => {
     return (
         <div
             className="modal-container"
@@ -232,6 +252,7 @@ const ConversationSettings = ({ close, rid }) => {
                             name="private-key"
                             className="text-input"
                             placeholder="Display name for this conversation."
+                            defaultValue={me ? me : "You"}
                         />
                     </div>
                 </div>
@@ -252,7 +273,7 @@ const ConversationSettings = ({ close, rid }) => {
                     <button className="button" onClick={close}>
                         Close
                     </button>
-                    <button className="button quest">Leave Conversation</button>
+                    <button className="button warn">Leave Conversation</button>
                     <button className="button inform">Update</button>
                 </div>
             </form>

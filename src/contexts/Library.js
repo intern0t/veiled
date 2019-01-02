@@ -13,4 +13,11 @@ const generateRoomID = () => {
     return `r-${uuidv4().split("-")[0]}`;
 };
 
-export { generateRandomColorCode, generateRoomID };
+const copyToClipboard = () => {
+    let toCopyFromElement = document.getElementById("toCopyURL");
+    toCopyFromElement.select();
+    document.execCommand("copy");
+    console.log(`${toCopyFromElement.value} Copied to clipboard.`);
+};
+
+export { generateRandomColorCode, generateRoomID, copyToClipboard };

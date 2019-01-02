@@ -10,40 +10,11 @@ export class AppProvider extends Component {
             mailTabDisplayed: true,
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
-        },
-        conversationInformation: {
-            rooms: [
-                {
-                    rid: "r-f0d6c1a6",
-                    note: "Dustin",
-                    key: "test"
-                },
-                {
-                    rid: "r-9f0205ea",
-                    note: "Edwin",
-                    key: "test"
-                },
-                {
-                    rid: "r-3a236848",
-                    note: "Sam",
-                    key: "test"
-                },
-                {
-                    rid: "r-d8715dee",
-                    note: "Kevin",
-                    key: "test"
-                }
-            ],
-            messages: [],
-            message: "",
-            generatedRoomID: generateRoomID(),
-            activeRoomID: null
         }
     };
 
     toggleMailTab = e => {
         e.preventDefault();
-
         this.setState(prevState => ({
             ...prevState,
             displayInformation: {
