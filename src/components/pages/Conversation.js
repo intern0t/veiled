@@ -7,11 +7,11 @@ import Message from "../Message";
 import SpeakBar from "../SpeakBar";
 import UserAvatar from "../UserAvatar";
 import { AppConsumer } from "../../contexts/AppProvider";
+import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
 class Conversation extends Component {
     state = {
         currentRoom: {
-            messages: [],
             message: ""
         }
     };
@@ -37,13 +37,13 @@ class Conversation extends Component {
 
     onSpeak = e => {
         const { currentRoom } = this.state;
-        const { userInformation, activeRoomID, addNewMessage } = this.context;
+        const { activeRoomID, addNewMessage, userInformation } = this.context;
         if (e.key === "Enter") {
             let newMessageEntry = {
                 date: Math.floor(Date.now() / 1000),
                 message: currentRoom.message,
-                sender: userInformation.displayName
-                    ? userInformation.displayName
+                sender: userInformation.user.displayName
+                    ? userInformation.user.displayName
                     : "Anonymous",
                 roomid: activeRoomID
             };
@@ -61,108 +61,140 @@ class Conversation extends Component {
     };
 
     render() {
-        let otherUser = "Anonymous";
+        let otherUser = "Empty User";
+
         return (
             <AppConsumer>
-                {({
-                    conSettingsModalDisplayed,
-                    toggleConSettingsModal,
-                    userInformation,
-                    rooms,
-                    activeRoomID,
-                    messages
-                }) => {
-                    let theRoom = rooms.filter(
-                        room => room.rid === activeRoomID
-                    );
-
+                {stuff => {
                     return (
-                        <div className="frightbar">
-                            <div className="frightbar-top">
-                                <div>
-                                    <UserAvatar
-                                        username={
-                                            theRoom &&
-                                            theRoom.length > 0 &&
-                                            theRoom[0].note
-                                                ? theRoom[0].note
-                                                : otherUser
-                                        }
-                                    />
-                                    {theRoom &&
-                                    theRoom.length > 0 &&
-                                    theRoom[0].note
-                                        ? `${theRoom[0].note} `
-                                        : otherUser}
-                                    <Tip
-                                        updated={true}
-                                        color="#82D455"
-                                        title={"Online"}
-                                    />
-                                </div>
-                                <div>
-                                    <Icon
-                                        icon={"fas fa-link"}
-                                        title="Share conversation"
-                                        style={{ cursor: "pointer" }}
-                                    />
+                        <ConversationConsumer>
+                            {({
+                                rooms,
+                                messages,
+                                activeRoomID,
+                                toggleConversationSettingsModal,
+                                conversationSettingsModalDisplayed,
+                                userInformation
+                            }) => {
+                                let theRoom = rooms.filter(
+                                    room => room.rid === activeRoomID
+                                );
 
-                                    <Icon
-                                        icon={"fas fa-cog"}
-                                        title={"Conversation Settings"}
-                                        onClick={e => toggleConSettingsModal(e)}
-                                        style={{ cursor: "pointer" }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="frightbar-inner">
-                                {messages
-                                    .filter(
-                                        messageEntry =>
-                                            messageEntry.roomid === activeRoomID
-                                    )
-                                    .map(messageEntry => {
-                                        return (
-                                            <Message
-                                                key={uuidv4()}
-                                                type={
-                                                    userInformation.displayName &&
-                                                    userInformation.displayName
-                                                        ? userInformation.displayName
-                                                        : "Undefined"
+                                return (
+                                    <div className="frightbar">
+                                        <div className="frightbar-top">
+                                            <div>
+                                                <UserAvatar
+                                                    username={
+                                                        theRoom &&
+                                                        theRoom.length > 0 &&
+                                                        theRoom[0].note
+                                                            ? theRoom[0].note
+                                                            : otherUser
+                                                    }
+                                                />
+                                                {theRoom &&
+                                                theRoom.length > 0 &&
+                                                theRoom[0].note
+                                                    ? `${theRoom[0].note} `
+                                                    : otherUser}
+                                                <Tip
+                                                    updated={true}
+                                                    color="#82D455"
+                                                    title={"Online"}
+                                                />
+                                            </div>
+                                            <div>
+                                                <Icon
+                                                    icon={"fas fa-link"}
+                                                    title="Share conversation"
+                                                    style={{
+                                                        cursor: "pointer"
+                                                    }}
+                                                />
+
+                                                <Icon
+                                                    icon={"fas fa-cog"}
+                                                    title={
+                                                        "Conversation Settings"
+                                                    }
+                                                    onClick={e =>
+                                                        toggleConversationSettingsModal(
+                                                            e
+                                                        )
+                                                    }
+                                                    style={{
+                                                        cursor: "pointer"
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="frightbar-inner">
+                                            {messages
+                                                .filter(
+                                                    messageEntry =>
+                                                        messageEntry.roomid ===
+                                                        activeRoomID
+                                                )
+                                                .map(messageEntry => {
+                                                    return (
+                                                        <Message
+                                                            key={uuidv4()}
+                                                            me={
+                                                                userInformation &&
+                                                                userInformation.user &&
+                                                                userInformation
+                                                                    .user
+                                                                    .displayName
+                                                                    ? userInformation
+                                                                          .user
+                                                                          .displayName
+                                                                    : otherUser
+                                                            }
+                                                            from={
+                                                                messageEntry &&
+                                                                messageEntry.sender
+                                                                    ? messageEntry.sender
+                                                                    : "Anonymous"
+                                                            }
+                                                            timestamp={
+                                                                messageEntry.date
+                                                            }
+                                                            message={
+                                                                messageEntry.message
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                        </div>
+                                        <SpeakBar
+                                            _onChange={this.onSpeakBarType}
+                                            _onSpeak={this.onSpeak}
+                                            message={
+                                                this.state.currentRoom.message
+                                            }
+                                        />
+                                        <Modal
+                                            style={{
+                                                display:
+                                                    conversationSettingsModalDisplayed &&
+                                                    conversationSettingsModalDisplayed ===
+                                                        true
+                                                        ? "flex"
+                                                        : "none"
+                                            }}
+                                        >
+                                            <ConversationSettings
+                                                close={
+                                                    toggleConversationSettingsModal
                                                 }
-                                                from={
-                                                    messageEntry &&
-                                                    messageEntry.sender
-                                                        ? messageEntry.sender
-                                                        : "Anonymous"
-                                                }
-                                                timestamp={messageEntry.date}
-                                                message={messageEntry.message}
+                                                rid={activeRoomID}
                                             />
-                                        );
-                                    })}
-                            </div>
-                            <SpeakBar
-                                _onChange={this.onSpeakBarType}
-                                _onSpeak={this.onSpeak}
-                                message={this.state.currentRoom.message}
-                            />
-                            <Modal
-                                style={{
-                                    display:
-                                        conSettingsModalDisplayed &&
-                                        conSettingsModalDisplayed === true
-                                            ? "flex"
-                                            : "none"
-                                }}
-                            >
-                                <ConversationSettings
-                                    close={toggleConSettingsModal}
-                                    rid={activeRoomID}
-                                />
-                            </Modal>
-                        </div>
+                                        </Modal>
+                                    </div>
+                                );
+                            }}
+                        </ConversationConsumer>
                     );
                 }}
             </AppConsumer>
@@ -228,5 +260,5 @@ const ConversationSettings = ({ close, rid }) => {
     );
 };
 
-Conversation.contextType = AppConsumer;
+Conversation.contextType = ConversationConsumer;
 export default Conversation;

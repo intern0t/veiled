@@ -5,11 +5,6 @@ const AppContext = React.createContext();
 
 export class AppProvider extends Component {
     state = {
-        userInformation: {
-            user: {
-                displayName: "Synonymous"
-            }
-        },
         displayInformation: {
             currentPage: "/conversation",
             mailTabDisplayed: true,
@@ -46,16 +41,6 @@ export class AppProvider extends Component {
         }
     };
 
-    _generateRoomID = () => {
-        this.setState(prevState => ({
-            ...prevState,
-            conversationInformation: {
-                ...prevState.conversationInformation,
-                generatedRoomID: generateRoomID()
-            }
-        }));
-    };
-
     toggleMailTab = e => {
         e.preventDefault();
 
@@ -64,30 +49,6 @@ export class AppProvider extends Component {
             displayInformation: {
                 ...prevState.displayInformation,
                 mailTabDisplayed: !prevState.displayInformation.mailTabDisplayed
-            }
-        }));
-    };
-
-    toggleConversationSettingsModal = e => {
-        e.preventDefault();
-        this.setState(prevState => ({
-            ...prevState,
-            displayInformation: {
-                ...prevState.displayInformation,
-                conversationSettingsModalDisplayed: !prevState
-                    .displayInformation.conversationSettingsModalDisplayed
-            }
-        }));
-    };
-
-    toggleNewConversationModal = e => {
-        e.preventDefault();
-        this.setState(prevState => ({
-            ...prevState,
-            displayInformation: {
-                ...prevState.displayInformation,
-                newConversationModalDisplayed: !prevState.displayInformation
-                    .newConversationModalDisplayed
             }
         }));
     };
@@ -102,58 +63,16 @@ export class AppProvider extends Component {
         }));
     };
 
-    changeActiveRoom = roomid => {
-        this.setState(prevState => ({
-            ...prevState,
-            conversationInformation: {
-                ...prevState.conversationInformation,
-                activeRoomID: roomid
-            }
-        }));
-    };
-
-    addNewMessage = newMessageEntry => {
-        this.setState(prevState => ({
-            ...prevState,
-            conversationInformation: {
-                ...prevState.conversationInformation,
-                messages: [
-                    ...prevState.conversationInformation.messages,
-                    newMessageEntry
-                ]
-            }
-        }));
-    };
-
     render() {
         const { children } = this.props;
-        const {
-            userInformation,
-            displayInformation,
-            conversationInformation
-        } = this.state;
+        const { displayInformation } = this.state;
         return (
             <AppContext.Provider
                 value={{
                     currentPage: displayInformation.currentPage,
                     mailTabDisplayed: displayInformation.mailTabDisplayed,
-                    userInformation: userInformation.user,
-                    conSettingsModalDisplayed:
-                        displayInformation.conversationSettingsModalDisplayed,
-                    newConModalDisplayed:
-                        displayInformation.newConversationModalDisplayed,
                     toggleMailTab: this.toggleMailTab,
-                    onPageChange: this.onPageChange,
-                    toggleConSettingsModal: this
-                        .toggleConversationSettingsModal,
-                    toggleNewConModal: this.toggleNewConversationModal,
-                    rooms: conversationInformation.rooms,
-                    messages: conversationInformation.messages,
-                    addNewMessage: this.addNewMessage,
-                    generatedRoomID: conversationInformation.generatedRoomID,
-                    generateRoomID: this._generateRoomID,
-                    activeRoomID: conversationInformation.activeRoomID,
-                    changeActiveRoom: this.changeActiveRoom
+                    onPageChange: this.onPageChange
                 }}
             >
                 {children}
@@ -161,4 +80,5 @@ export class AppProvider extends Component {
         );
     }
 }
+
 export const AppConsumer = AppContext.Consumer;

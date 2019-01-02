@@ -2,8 +2,8 @@ import React from "react";
 import moment from "moment";
 import UserAvatar from "./UserAvatar";
 
-const Message = ({ type, timestamp, message, from }) => {
-    const yourMessages = type === from;
+const Message = ({ me, timestamp, message, from }) => {
+    const yourMessages = me === from;
     return (
         <div className="message-entry">
             <div
@@ -15,11 +15,11 @@ const Message = ({ type, timestamp, message, from }) => {
                 <div className="message-wrapper">
                     <span
                         className={`message ${
-                            yourMessages ? "message-you" : "message-from"
+                            yourMessages ? "message-from" : "message-you"
                         }`}
                         style={{
-                            marginLeft: yourMessages ? "75px" : "0",
-                            marginRight: !yourMessages ? "75px" : "0"
+                            marginLeft: yourMessages ? "50px" : "0",
+                            marginRight: !yourMessages ? "30px" : "0"
                         }}
                     >
                         {message}

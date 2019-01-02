@@ -7,6 +7,7 @@ import UserAvatar from "./UserAvatar";
 import { generateRandomColorCode } from "../contexts/Library";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import { AppConsumer } from "../contexts/AppProvider";
+import { ConversationConsumer } from "../contexts/ConversationProvider";
 
 class Brightbar extends Component {
     render() {
@@ -18,47 +19,59 @@ class Brightbar extends Component {
                     newConModalDisplayed,
                     generatedRoomID,
                     generateRoomID,
-                    rooms,
-                    activeRoomID,
-                    changeActiveRoom
-                }) => (
-                    <div
-                        className="brightbar"
-                        style={{
-                            display:
-                                mailTabDisplayed && mailTabDisplayed === true
-                                    ? "block"
-                                    : "none"
-                        }}
-                    >
-                        <ConversationSearch toggle={toggleNewConModal} />
-                        <ul className="brightbar-conversations">
-                            {rooms && rooms.length > 0
-                                ? rooms.map(room => {
-                                      return (
-                                          <ConversationEntry
-                                              room={room}
-                                              key={uuidv4()}
-                                              _changeRoom={changeActiveRoom}
-                                          />
-                                      );
-                                  })
-                                : null}
-                        </ul>
+                }) => {
+                    return (
+                        <ConversationConsumer>
+                            {({ rooms, changeActiveRoom }) => {
+                                return (
+                                    <div
+                                        className="brightbar"
+                                        style={{
+                                            display:
+                                                mailTabDisplayed &&
+                                                mailTabDisplayed === true
+                                                    ? "block"
+                                                    : "none"
+                                        }}
+                                    >
+                                        <ConversationSearch
+                                            toggle={toggleNewConModal}
+                                        />
+                                        <ul className="brightbar-conversations">
+                                            {rooms && rooms.length > 0
+                                                ? rooms.map(room => {
+                                                      return (
+                                                          <ConversationEntry
+                                                              room={room}
+                                                              key={uuidv4()}
+                                                              _changeRoom={
+                                                                  changeActiveRoom
+                                                              }
+                                                          />
+                                                      );
+                                                  })
+                                                : null}
+                                        </ul>
 
-                        <Modal
-                            style={{
-                                display: newConModalDisplayed ? "flex" : "none"
+                                        <Modal
+                                            style={{
+                                                display: newConModalDisplayed
+                                                    ? "flex"
+                                                    : "none"
+                                            }}
+                                        >
+                                            <AddNewConversation
+                                                close={toggleNewConModal}
+                                                generate={generateRoomID}
+                                                generated={generatedRoomID}
+                                            />
+                                        </Modal>
+                                    </div>
+                                );
                             }}
-                        >
-                            <AddNewConversation
-                                close={toggleNewConModal}
-                                generate={generateRoomID}
-                                generated={generatedRoomID}
-                            />
-                        </Modal>
-                    </div>
-                )}
+                        </ConversationConsumer>
+                    );
+                }}
             </AppConsumer>
         );
     }
