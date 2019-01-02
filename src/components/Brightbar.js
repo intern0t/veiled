@@ -10,19 +10,45 @@ import { AppConsumer } from "../contexts/AppProvider";
 import { ConversationConsumer } from "../contexts/ConversationProvider";
 
 class Brightbar extends Component {
+    state = {
+        filterBy: ""
+    };
+
+    onFilterChange = e => {
+        let filterBy = e.target.value.toLowerCase() || "";
+        this.setState({
+            filterBy
+        });
+    };
+
+    filterRoom = room => {
+        const { filterBy } = this.state;
+        return room.note.toLowerCase().includes(filterBy) === true;
+    };
+
+    // Clear filter.
+    clearFilter = e => {
+        if (e.key === "Escape") {
+            this.setState({
+                filterBy: ""
+            });
+        }
+    };
+
     render() {
         return (
             <AppConsumer>
-                {({
-                    mailTabDisplayed,
-                    toggleNewConModal,
-                    newConModalDisplayed,
-                    generatedRoomID,
-                    generateRoomID,
-                }) => {
+                {({ mailTabDisplayed }) => {
                     return (
                         <ConversationConsumer>
-                            {({ rooms, changeActiveRoom }) => {
+                            {({
+                                rooms,
+                                changeActiveRoom,
+                                toggleNewConversationModal,
+                                newConversationModalDisplayed,
+                                generatedRoomID,
+                                generateRoomID
+                            }) => {
                                 return (
                                     <div
                                         className="brightbar"
@@ -35,33 +61,40 @@ class Brightbar extends Component {
                                         }}
                                     >
                                         <ConversationSearch
-                                            toggle={toggleNewConModal}
+                                            toggle={toggleNewConversationModal}
+                                            onChange={this.onFilterChange}
+                                            clearFilter={this.clearFilter}
+                                            filterBy={this.state.filterBy}
                                         />
                                         <ul className="brightbar-conversations">
                                             {rooms && rooms.length > 0
-                                                ? rooms.map(room => {
-                                                      return (
-                                                          <ConversationEntry
-                                                              room={room}
-                                                              key={uuidv4()}
-                                                              _changeRoom={
-                                                                  changeActiveRoom
-                                                              }
-                                                          />
-                                                      );
-                                                  })
+                                                ? rooms
+                                                      .filter(this.filterRoom)
+                                                      .map(room => {
+                                                          return (
+                                                              <ConversationEntry
+                                                                  room={room}
+                                                                  key={uuidv4()}
+                                                                  _changeRoom={
+                                                                      changeActiveRoom
+                                                                  }
+                                                              />
+                                                          );
+                                                      })
                                                 : null}
                                         </ul>
 
                                         <Modal
                                             style={{
-                                                display: newConModalDisplayed
+                                                display: newConversationModalDisplayed
                                                     ? "flex"
                                                     : "none"
                                             }}
                                         >
                                             <AddNewConversation
-                                                close={toggleNewConModal}
+                                                close={
+                                                    toggleNewConversationModal
+                                                }
                                                 generate={generateRoomID}
                                                 generated={generatedRoomID}
                                             />
@@ -77,13 +110,16 @@ class Brightbar extends Component {
     }
 }
 
-const ConversationSearch = ({ toggle }) => {
+const ConversationSearch = ({ toggle, onChange, clearFilter, filterBy }) => {
     return (
         <div className="brightbar-search">
             <input
                 type="text"
                 className="text-input"
                 placeholder="Search Conversations"
+                value={filterBy}
+                onChange={e => onChange(e)}
+                onKeyDown={e => clearFilter(e)}
             />
             <Icon
                 icon={"fas fa-plus-square"}
@@ -163,6 +199,19 @@ const AddNewConversation = ({ close, generate, generated }) => {
                 </div>
                 <div>
                     <div>
+                        <label htmlFor="room-identifier">Note</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            className="text-input"
+                            name="room-identifier"
+                            placeholder="To better identify this room."
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
                         <label htmlFor="private-key">Private Key</label>
                     </div>
                     <div>
@@ -185,4 +234,5 @@ const AddNewConversation = ({ close, generate, generated }) => {
     );
 };
 
+Brightbar.contextType = ConversationConsumer;
 export default Brightbar;

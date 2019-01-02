@@ -8,12 +8,32 @@ export class ConversationProvider extends Component {
         rooms: [
             {
                 rid: "r-f0d6c1a6",
-                note: "Prashant",
+                note: "Vicky",
                 key: "test"
             },
             {
                 rid: "r-9f0205ea",
-                note: "Shrestha",
+                note: "Edward",
+                key: "test"
+            },
+            {
+                rid: "r-bef987aa",
+                note: "Issac",
+                key: "test"
+            },
+            {
+                rid: "r-f4df580b",
+                note: "Lewis",
+                key: "test"
+            },
+            {
+                rid: "r-bd2bd857",
+                note: "Elizabeth",
+                key: "test"
+            },
+            {
+                rid: "r-2b7d7cc5",
+                note: "Diego",
                 key: "test"
             }
         ],
@@ -31,10 +51,10 @@ export class ConversationProvider extends Component {
         activeRoomID: null
     };
 
-    _generateRoomID = () => {
+    generateRoomID = () => {
         this.setState(prevState => ({
             ...prevState,
-            generateRoomID: generateRoomID()
+            generatedRoomID: generateRoomID()
         }));
     };
 
