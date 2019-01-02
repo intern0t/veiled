@@ -227,7 +227,7 @@ body {
                                     @include BorderRadius(5px, all);
                                     color: rgba($BrightGray, 0.7);
                                     padding: 5px 20px;
-                                    line-height: $defaultFontSize * 2.3;
+                                    line-height: $defaultFontSize * 1.99;
 
 
                                     &-from {

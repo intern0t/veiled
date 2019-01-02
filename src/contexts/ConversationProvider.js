@@ -44,13 +44,30 @@ export class ConversationProvider extends Component {
         },
         userInformation: {
             user: {
-                displayName: "Synonymous"
+                displayName: "Prashant Shrestha"
             }
         },
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
 
+    /**
+     * TODO: Fetch & load all saved rooms from localStorage, if exists.
+     */
+    componentDidMount() {
+        let roomsFromLocalStorage = localStorage.getItem("rooms");
+        if (roomsFromLocalStorage) {
+            this.setState(prevState => ({
+                ...prevState,
+                rooms: JSON.parse(roomsFromLocalStorage)
+            }));
+        }
+    }
+
+    /**
+     * * Generates a new room id. Room ID can only be generated.
+     * @memberof ConversationProvider
+     */
     generateRoomID = () => {
         this.setState(prevState => ({
             ...prevState,
@@ -58,6 +75,11 @@ export class ConversationProvider extends Component {
         }));
     };
 
+    /**
+     * * Add new message to the messages list.
+     * TODO: Make sure to store maximum of 50 messages of ea. room.
+     * @memberof ConversationProvider
+     */
     addNewMessage = newMessageEntry => {
         this.setState(prevState => ({
             ...prevState,
