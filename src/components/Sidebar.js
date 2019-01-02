@@ -17,7 +17,8 @@ class Sidebar extends Component {
                                     title="Conversation"
                                     className={
                                         (currentPage && currentPage === "/") ||
-                                        currentPage === "/conversation"
+                                        currentPage === "/conversation" ||
+                                        currentPage.includes("/veiled/")
                                             ? "sidebar-section-active"
                                             : ""
                                     }

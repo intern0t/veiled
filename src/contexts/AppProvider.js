@@ -5,11 +5,6 @@ const AppContext = React.createContext();
 
 export class AppProvider extends Component {
     state = {
-        userInformation: {
-            user: {
-                displayName: "Synonymous"
-            }
-        },
         displayInformation: {
             currentPage: "/conversation",
             mailTabDisplayed: true,
@@ -68,44 +63,16 @@ export class AppProvider extends Component {
         }));
     };
 
-    changeActiveRoom = roomid => {
-        this.setState(prevState => ({
-            ...prevState,
-            conversationInformation: {
-                ...prevState.conversationInformation,
-                activeRoomID: roomid
-            }
-        }));
-    };
-
-    addNewMessage = newMessageEntry => {
-        this.setState(prevState => ({
-            ...prevState,
-            conversationInformation: {
-                ...prevState.conversationInformation,
-                messages: [
-                    ...prevState.conversationInformation.messages,
-                    newMessageEntry
-                ]
-            }
-        }));
-    };
-
     render() {
         const { children } = this.props;
-        const {
-            userInformation,
-            displayInformation,
-            conversationInformation
-        } = this.state;
+        const { displayInformation } = this.state;
         return (
             <AppContext.Provider
                 value={{
                     currentPage: displayInformation.currentPage,
                     mailTabDisplayed: displayInformation.mailTabDisplayed,
-                    userInformation: userInformation.user,
                     toggleMailTab: this.toggleMailTab,
-                    onPageChange: this.onPageChange,
+                    onPageChange: this.onPageChange
                 }}
             >
                 {children}

@@ -22,6 +22,11 @@ export class ConversationProvider extends Component {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
+        userInformation: {
+            user: {
+                displayName: "Synonymous"
+            }
+        },
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
@@ -90,7 +95,8 @@ export class ConversationProvider extends Component {
                         .newConversationModalDisplayed,
                     toggleConversationSettingsModal: this
                         .toggleConversationSettingsModal,
-                    toggleNewConversationModal: this.toggleNewConversationModal
+                    toggleNewConversationModal: this.toggleNewConversationModal,
+                    userInformation: this.state.userInformation
                 }}
             >
                 {children}
