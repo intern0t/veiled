@@ -9,6 +9,11 @@ import UserAvatar from "../UserAvatar";
 import { copyToClipboard } from "../../contexts/Library";
 import { AppConsumer } from "../../contexts/AppProvider";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
+import { BACKEND_URL } from "../../config";
+
+// Requiring Socket.IO client.
+import io from "socket.io-client";
+let veil = io.connect(BACKEND_URL + "/veil");
 
 class Conversation extends Component {
     state = {
@@ -22,7 +27,21 @@ class Conversation extends Component {
         const { changeActiveRoom } = this.context;
         if (match && match.params && match.params.roomid) {
             changeActiveRoom(match.params.roomid || "r-general");
+            // Let's join the room.
+            veil.emit("join", { roomid: match.params.roomid });
         }
+
+        veil.on("notification", notification => {
+            console.log(notification);
+        });
+
+        veil.on("message", data => {
+            this.onMessageReceived(data);
+        });
+    }
+
+    componentWillUnmount(){
+        veil.disconnect();
     }
 
     onSpeakBarType = e => {
@@ -51,6 +70,8 @@ class Conversation extends Component {
 
             addNewMessage(newMessageEntry);
 
+            this.onSendMessage(newMessageEntry);
+
             this.setState(prevState => ({
                 ...prevState,
                 currentRoom: {
@@ -59,6 +80,16 @@ class Conversation extends Component {
                 }
             }));
         }
+    };
+
+    onSendMessage = messageEntry => {
+        veil.emit("message", messageEntry);
+    };
+
+    onMessageReceived = messageEntry => {
+        const { addNewMessage } = this.context;
+        console.log(messageEntry);
+        addNewMessage(messageEntry);
     };
 
     render() {
@@ -209,6 +240,11 @@ class Conversation extends Component {
                                                               .displayName
                                                         : otherUser
                                                 }
+                                                roomNote={
+                                                    theRoom[0]
+                                                        ? theRoom[0].note
+                                                        : "Unknown Room Note"
+                                                }
                                             />
                                         </Modal>
                                     </div>
@@ -222,7 +258,7 @@ class Conversation extends Component {
     }
 }
 
-const ConversationSettings = ({ me, close, rid }) => {
+const ConversationSettings = ({ me, close, rid, roomNote }) => {
     return (
         <div
             className="modal-container"
@@ -253,6 +289,20 @@ const ConversationSettings = ({ me, close, rid }) => {
                             className="text-input"
                             placeholder="Display name for this conversation."
                             defaultValue={me ? me : "You"}
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label htmlFor="change-note">Note</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            name="change-note"
+                            className="text-input"
+                            placeholder="Edit/Enter note to identify this conversation/room."
+                            defaultValue={roomNote}
                         />
                     </div>
                 </div>

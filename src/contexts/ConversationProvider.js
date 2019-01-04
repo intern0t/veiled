@@ -81,10 +81,16 @@ export class ConversationProvider extends Component {
      * @memberof ConversationProvider
      */
     addNewMessage = newMessageEntry => {
-        this.setState(prevState => ({
-            ...prevState,
-            messages: [...prevState.messages, newMessageEntry]
-        }));
+        if (
+            !this.state.messages.find(message => {
+                return message.message === newMessageEntry.message;
+            })
+        ) {
+            this.setState(prevState => ({
+                ...prevState,
+                messages: [...prevState.messages, newMessageEntry]
+            }));
+        }
     };
 
     toggleConversationSettingsModal = e => {
