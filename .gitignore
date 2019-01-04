@@ -24,3 +24,5 @@ yarn-error.log*
 
 .sass-cache*
 .sass-cache/*
+
+src/config.js
