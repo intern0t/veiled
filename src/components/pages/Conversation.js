@@ -24,15 +24,23 @@ class Conversation extends Component {
 
     componentDidMount() {
         const { match } = this.props;
-        const { changeActiveRoom } = this.context;
-        if (match && match.params && match.params.roomid) {
+        const { activeRoomID, changeActiveRoom } = this.context;
+
+        if (
+            match &&
+            match.params &&
+            match.params.roomid &&
+            match.params.roomid !== activeRoomID
+        ) {
             changeActiveRoom(match.params.roomid || "r-general");
             // Let's join the room.
             veil.emit("join", { roomid: match.params.roomid });
         }
 
         veil.on("notification", notification => {
-            console.log(notification);
+            console.log({
+                notification: notification
+            });
         });
 
         veil.on("message", data => {
@@ -40,7 +48,25 @@ class Conversation extends Component {
         });
     }
 
-    componentWillUnmount(){
+    componentDidUpdate(prevProps) {
+        const { activeRoomID } = this.context;
+
+        if (activeRoomID !== prevProps.match.params.roomid) {
+            veil.emit("join", { roomid: activeRoomID });
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        const { activeRoomID } = this.context;
+
+        if (nextProps.activeRoomID !== activeRoomID) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    componentWillUnmount() {
         veil.disconnect();
     }
 

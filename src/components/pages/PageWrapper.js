@@ -5,8 +5,8 @@ class PageWrapper extends Component {
     componentDidMount() {
         const { match } = this.props;
         const { currentPage, onPageChange } = this.context;
-        
-        if(match.path !== currentPage){
+
+        if (match.path !== currentPage) {
             onPageChange(match.path || match.url || "/conversation");
         }
     }

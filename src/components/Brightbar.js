@@ -70,17 +70,15 @@ class Brightbar extends Component {
                                             {rooms && rooms.length > 0
                                                 ? rooms
                                                       .filter(this.filterRoom)
-                                                      .map(room => {
-                                                          return (
-                                                              <ConversationEntry
-                                                                  room={room}
-                                                                  key={uuidv4()}
-                                                                  _changeRoom={
-                                                                      changeActiveRoom
-                                                                  }
-                                                              />
-                                                          );
-                                                      })
+                                                      .map(room => (
+                                                          <ConversationEntry
+                                                              room={room}
+                                                              key={uuidv4()}
+                                                              _changeRoom={
+                                                                  changeActiveRoom
+                                                              }
+                                                          />
+                                                      ))
                                                 : null}
                                         </ul>
 
