@@ -9,11 +9,6 @@ import UserAvatar from "../UserAvatar";
 import { copyToClipboard } from "../../contexts/Library";
 import { AppConsumer } from "../../contexts/AppProvider";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
-import { BACKEND_URL } from "../../config";
-
-// Requiring Socket.IO client.
-import io from "socket.io-client";
-let veil = io.connect(BACKEND_URL + "/veil");
 
 class Conversation extends Component {
     state = {
@@ -23,8 +18,9 @@ class Conversation extends Component {
     };
 
     componentDidMount() {
+        console.log(`Conv. mounted with ${this.props.match.params.roomid}`);
         const { match } = this.props;
-        const { activeRoomID, changeActiveRoom } = this.context;
+        const { veil, rooms, activeRoomID, changeActiveRoom } = this.context;
 
         if (
             match &&
@@ -34,9 +30,16 @@ class Conversation extends Component {
         ) {
             changeActiveRoom(match.params.roomid || "r-general");
             // Let's join the room.
-            veil.emit("join", { roomid: match.params.roomid });
+            if (veil) {
+                rooms.map(room => {
+                    veil.emit("join", { roomid: room.rid });
+                });
+            }
         }
+    }
 
+    componentDidUpdate(prevProps) {
+        const { veil } = this.context;
         veil.on("notification", notification => {
             console.log({
                 notification: notification
@@ -46,28 +49,6 @@ class Conversation extends Component {
         veil.on("message", data => {
             this.onMessageReceived(data);
         });
-    }
-
-    componentDidUpdate(prevProps) {
-        const { activeRoomID } = this.context;
-
-        if (activeRoomID !== prevProps.match.params.roomid) {
-            veil.emit("join", { roomid: activeRoomID });
-        }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        const { activeRoomID } = this.context;
-
-        if (nextProps.activeRoomID !== activeRoomID) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    componentWillUnmount() {
-        veil.disconnect();
     }
 
     onSpeakBarType = e => {
@@ -109,12 +90,12 @@ class Conversation extends Component {
     };
 
     onSendMessage = messageEntry => {
+        const { veil, activeRoomID } = this.context;
         veil.emit("message", messageEntry);
     };
 
     onMessageReceived = messageEntry => {
         const { addNewMessage } = this.context;
-        console.log(messageEntry);
         addNewMessage(messageEntry);
     };
 
@@ -132,7 +113,8 @@ class Conversation extends Component {
                                 activeRoomID,
                                 toggleConversationSettingsModal,
                                 conversationSettingsModalDisplayed,
-                                userInformation
+                                userInformation,
+                                leaveRoom
                             }) => {
                                 let theRoom = rooms.filter(
                                     room => room.rid === activeRoomID
@@ -266,10 +248,13 @@ class Conversation extends Component {
                                                               .displayName
                                                         : otherUser
                                                 }
-                                                roomNote={
+                                                roomNote={() =>
                                                     theRoom[0]
                                                         ? theRoom[0].note
                                                         : "Unknown Room Note"
+                                                }
+                                                leaveRoom={() =>
+                                                    leaveRoom(theRoom[0].rid)
                                                 }
                                             />
                                         </Modal>
@@ -284,7 +269,7 @@ class Conversation extends Component {
     }
 }
 
-const ConversationSettings = ({ me, close, rid, roomNote }) => {
+const ConversationSettings = ({ me, close, rid, roomNote, leaveRoom }) => {
     return (
         <div
             className="modal-container"
@@ -349,7 +334,9 @@ const ConversationSettings = ({ me, close, rid, roomNote }) => {
                     <button className="button" onClick={close}>
                         Close
                     </button>
-                    <button className="button warn">Leave Conversation</button>
+                    <button className="button warn" onClick={leaveRoom}>
+                        Leave Conversation
+                    </button>
                     <button className="button inform">Update</button>
                 </div>
             </form>

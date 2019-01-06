@@ -81,7 +81,6 @@ class Brightbar extends Component {
                                                       ))
                                                 : null}
                                         </ul>
-
                                         <Modal
                                             style={{
                                                 display: newConversationModalDisplayed
@@ -133,22 +132,19 @@ const ConversationEntry = ({ room, _changeRoom }) => {
     let colorCode = generateRandomColorCode();
     let newMessages = 11;
     return (
-        <Router>
-            <li>
-                <Link
-                    to={`/veiled/${room.rid}`}
-                    onClick={e => _changeRoom(room.rid)}
-                    className="brightbar-conversations-entry"
-                >
-                    <UserAvatar username={room.note} />
-                    <div className="brightbar-conversations-entry-message">
-                        <h1>{room.note ? room.note : "Anonymous"}</h1>
-                        <p>{`Your conversation with ${room.note}..`}</p>
-                    </div>
-                    <TipCounter color={colorCode} newMessages={newMessages} />
-                </Link>
-            </li>
-        </Router>
+        <li>
+            <Link
+                to={`/veiled/${room.rid}`}
+                className="brightbar-conversations-entry"
+            >
+                <UserAvatar username={room.note} />
+                <div className="brightbar-conversations-entry-message">
+                    <h1>{room.note ? room.note : "Anonymous"}</h1>
+                    <p>{`Your conversation with ${room.note}..`}</p>
+                </div>
+                <TipCounter color={colorCode} newMessages={newMessages} />
+            </Link>
+        </li>
     );
 };
 

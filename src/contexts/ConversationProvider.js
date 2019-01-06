@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import { generateRoomID } from "./Library";
+// Implementing Sockets
+import { BACKEND_URL } from "../config";
+import io from "socket.io-client";
+let veil = io.connect(BACKEND_URL + "/veil");
 
 const ConversationContext = React.createContext();
 
@@ -124,6 +128,16 @@ export class ConversationProvider extends Component {
         }));
     };
 
+    onRoomLeave = roomid => {
+        let updatedRooms = this.state.rooms.filter(
+            joinedRooms => joinedRooms.rid !== roomid
+        );
+        this.setState(prevState => ({
+            ...prevState,
+            rooms: updatedRooms
+        }));
+    };
+
     render() {
         const { children } = this.props;
 
@@ -144,7 +158,8 @@ export class ConversationProvider extends Component {
                     toggleConversationSettingsModal: this
                         .toggleConversationSettingsModal,
                     toggleNewConversationModal: this.toggleNewConversationModal,
-                    userInformation: this.state.userInformation
+                    userInformation: this.state.userInformation,
+                    leaveRoom: this.onRoomLeave
                 }}
             >
                 {children}

@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import Brightbar from "../components/Brightbar";
+import MainPage from "../components/pages/MainPage";
 import Conversation from "../components/pages/Conversation";
 import Settings from "../components/pages/Settings";
 import Bugs from "../components/pages/Bugs";
@@ -8,48 +9,26 @@ import Archive from "../components/pages/Archive";
 import { AppProvider } from "../contexts/AppProvider";
 import {
     ConversationProvider,
-    ConversationConsumer
 } from "../contexts/ConversationProvider";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import {  Switch, Route } from "react-router-dom";
 import Footer from "../components/Footer";
 import PageWrapper from "../components/pages/PageWrapper";
+import SocketWrapper from "../containers/SocketWrapper";
 
 const ApplicationRouter = () => {
     return (
-        <BrowserRouter>
-            <AppProvider>
-                <ConversationProvider>
-                    <div className="main-container">
-                        <div className="main-container-wrapper">
-                            <Sidebar />
-                            <Brightbar />
+        <AppProvider>
+            <ConversationProvider>
+                <div className="main-container">
+                    <div className="main-container-wrapper">
+                        <Sidebar />
+                        <Brightbar />
+                        <SocketWrapper>
                             <Switch>
-                                <Route
-                                    exact
-                                    path="/"
-                                    component={props => (
-                                        <PageWrapper {...props}>
-                                            <Conversation />
-                                        </PageWrapper>
-                                    )}
-                                />
                                 <Route
                                     path="/veiled/:roomid"
                                     component={props => {
-                                        return (
-                                            <ConversationConsumer>
-                                                {({ activeRoomID }) => {
-                                                    return (
-                                                        <Conversation
-                                                            {...props}
-                                                            activeRoomID={
-                                                                activeRoomID
-                                                            }
-                                                        />
-                                                    );
-                                                }}
-                                            </ConversationConsumer>
-                                        );
+                                        return <Conversation {...props} />;
                                     }}
                                 />
                                 <Route
@@ -57,11 +36,10 @@ const ApplicationRouter = () => {
                                     path="/conversation"
                                     component={props => (
                                         <PageWrapper {...props}>
-                                            <Conversation />
+                                            <MainPage />
                                         </PageWrapper>
                                     )}
                                 />
-                                {/* <Route path="/conversations" component={Frightbar} /> */}
                                 <Route
                                     exact
                                     path="/archive"
@@ -93,16 +71,22 @@ const ApplicationRouter = () => {
                                         );
                                     }}
                                 />
+                                <Route
+                                    exact
+                                    path="/"
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <MainPage />
+                                        </PageWrapper>
+                                    )}
+                                />
                             </Switch>
-                            {/* <Frightbar>
-                                
-                            </Frightbar> */}
-                        </div>
-                        <Footer />
+                        </SocketWrapper>
                     </div>
-                </ConversationProvider>
-            </AppProvider>
-        </BrowserRouter>
+                    <Footer />
+                </div>
+            </ConversationProvider>
+        </AppProvider>
     );
 };
 
