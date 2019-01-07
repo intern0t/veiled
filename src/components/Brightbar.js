@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import TipCounter from "./TipCounter";
 import UserAvatar from "./UserAvatar";
 import { generateRandomColorCode } from "../contexts/Library";
-import { BrowserRouter as Router, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppConsumer } from "../contexts/AppProvider";
 import { ConversationConsumer } from "../contexts/ConversationProvider";
 
@@ -70,20 +70,17 @@ class Brightbar extends Component {
                                             {rooms && rooms.length > 0
                                                 ? rooms
                                                       .filter(this.filterRoom)
-                                                      .map(room => {
-                                                          return (
-                                                              <ConversationEntry
-                                                                  room={room}
-                                                                  key={uuidv4()}
-                                                                  _changeRoom={
-                                                                      changeActiveRoom
-                                                                  }
-                                                              />
-                                                          );
-                                                      })
+                                                      .map(room => (
+                                                          <ConversationEntry
+                                                              room={room}
+                                                              key={uuidv4()}
+                                                              _changeRoom={
+                                                                  changeActiveRoom
+                                                              }
+                                                          />
+                                                      ))
                                                 : null}
                                         </ul>
-
                                         <Modal
                                             style={{
                                                 display: newConversationModalDisplayed
@@ -135,22 +132,19 @@ const ConversationEntry = ({ room, _changeRoom }) => {
     let colorCode = generateRandomColorCode();
     let newMessages = 11;
     return (
-        <Router>
-            <li>
-                <Link
-                    to={`/veiled/${room.rid}`}
-                    onClick={e => _changeRoom(room.rid)}
-                    className="brightbar-conversations-entry"
-                >
-                    <UserAvatar username={room.note} />
-                    <div className="brightbar-conversations-entry-message">
-                        <h1>{room.note ? room.note : "Anonymous"}</h1>
-                        <p>{`Your conversation with ${room.note}..`}</p>
-                    </div>
-                    <TipCounter color={colorCode} newMessages={newMessages} />
-                </Link>
-            </li>
-        </Router>
+        <li>
+            <Link
+                to={`/veiled/${room.rid}`}
+                className="brightbar-conversations-entry"
+            >
+                <UserAvatar username={room.note} />
+                <div className="brightbar-conversations-entry-message">
+                    <h1>{room.note ? room.note : "Anonymous"}</h1>
+                    <p>{`Your conversation with ${room.note}..`}</p>
+                </div>
+                <TipCounter color={colorCode} newMessages={newMessages} />
+            </Link>
+        </li>
     );
 };
 

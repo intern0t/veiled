@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import { generateRoomID } from "./Library";
+// Implementing Sockets
+import { BACKEND_URL } from "../config";
+import io from "socket.io-client";
+const veil = io.connect(BACKEND_URL + "/veil");
 
 const ConversationContext = React.createContext();
 
@@ -37,6 +41,7 @@ export class ConversationProvider extends Component {
                 key: "test"
             }
         ],
+        message: "", // input default value can't be null so..
         messages: [],
         modals: {
             conversationSettingsModalDisplayed: false,
@@ -62,7 +67,30 @@ export class ConversationProvider extends Component {
                 rooms: JSON.parse(roomsFromLocalStorage)
             }));
         }
+
+        const { rooms } = this.state;
+
+        rooms.map(room => {
+            veil.emit("join", { roomid: room.rid });
+            veil.on("notification", notice => {
+                this.onNotificationReceived(notice);
+            });
+            veil.on("message", data => {
+                this.onMessageReceived(data);
+            });
+            return false;
+        });
     }
+
+    onNotificationReceived = notice => {
+        if (notice.error) {
+            console.log(notice);
+        }
+    };
+
+    onMessageReceived = messageEntry => {
+        this.addNewMessage(messageEntry);
+    };
 
     /**
      * * Generates a new room id. Room ID can only be generated.
@@ -75,16 +103,60 @@ export class ConversationProvider extends Component {
         }));
     };
 
+    onSendMessage = messageEntry => {
+        if (veil.connected) {
+            veil.emit("message", messageEntry);
+        }
+    };
     /**
      * * Add new message to the messages list.
      * TODO: Make sure to store maximum of 50 messages of ea. room.
      * @memberof ConversationProvider
      */
     addNewMessage = newMessageEntry => {
+        if (
+            !this.state.messages.find(message => {
+                return message.message === newMessageEntry.message;
+            })
+        ) {
+            this.setState(prevState => ({
+                ...prevState,
+                messages: [...prevState.messages, newMessageEntry]
+            }));
+        }
+    };
+
+    onSpeakBarChange = e => {
+        let appendedMessage = e.target.value || "";
         this.setState(prevState => ({
             ...prevState,
-            messages: [...prevState.messages, newMessageEntry]
+            message: appendedMessage
         }));
+    };
+
+    onSpeakBarSpoken = e => {
+        const { activeRoomID, message, userInformation } = this.state;
+        if (e.key === "Enter") {
+            if (message && message.length > 0) {
+                let newMessageEntry = {
+                    date: Math.floor(Date.now() / 1000),
+                    message: message,
+                    sender: userInformation.user.displayName
+                        ? userInformation.user.displayName
+                        : "Anonymous",
+                    roomid: activeRoomID
+                };
+
+                this.addNewMessage(newMessageEntry);
+
+                this.onSendMessage(newMessageEntry);
+
+                this.setState(prevState => ({
+                    ...prevState,
+                    message: ""
+                }));
+            }
+        }
     };
 
     toggleConversationSettingsModal = e => {
@@ -118,18 +190,32 @@ export class ConversationProvider extends Component {
         }));
     };
 
+    onRoomLeave = roomid => {
+        let updatedRooms = this.state.rooms.filter(
+            joinedRooms => joinedRooms.rid !== roomid
+        );
+        this.setState(prevState => ({
+            ...prevState,
+            rooms: updatedRooms
+        }));
+    };
+
     render() {
         const { children } = this.props;
 
         return (
             <ConversationContext.Provider
                 value={{
+                    veil: veil,
                     rooms: this.state.rooms,
                     activeRoomID: this.state.activeRoomID,
                     changeActiveRoom: this.changeActiveRoom,
                     generateRoomID: this.generateRoomID,
                     generatedRoomID: this.state.generatedRoomID,
                     messages: this.state.messages,
+                    message: this.state.message,
+                    onSpeakBarChange: this.onSpeakBarChange,
+                    onSpeakBarSpoken: this.onSpeakBarSpoken,
                     addNewMessage: this.addNewMessage,
                     conversationSettingsModalDisplayed: this.state.modals
                         .conversationSettingsModalDisplayed,
@@ -138,7 +224,8 @@ export class ConversationProvider extends Component {
                     toggleConversationSettingsModal: this
                         .toggleConversationSettingsModal,
                     toggleNewConversationModal: this.toggleNewConversationModal,
-                    userInformation: this.state.userInformation
+                    userInformation: this.state.userInformation,
+                    leaveRoom: this.onRoomLeave
                 }}
             >
                 {children}

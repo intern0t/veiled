@@ -4,60 +4,40 @@ import Tip from "../Tip";
 import Icon from "../Icon";
 import Modal from "../Modal";
 import Message from "../Message";
-import SpeakBar from "../SpeakBar";
 import UserAvatar from "../UserAvatar";
 import { copyToClipboard } from "../../contexts/Library";
 import { AppConsumer } from "../../contexts/AppProvider";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
 class Conversation extends Component {
-    state = {
-        currentRoom: {
-            message: ""
-        }
-    };
-
     componentDidMount() {
         const { match } = this.props;
-        const { changeActiveRoom } = this.context;
-        if (match && match.params && match.params.roomid) {
+        const { activeRoomID, changeActiveRoom } = this.context;
+
+        if (
+            match &&
+            match.params &&
+            match.params.roomid &&
+            match.params.roomid !== activeRoomID
+        ) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
+
+        console.log(
+            `Conversation window mounted with conversation for roomid: ${
+                match.params.roomid
+            }.`
+        );
     }
 
-    onSpeakBarType = e => {
-        let appendedMessage = e.target.value || "";
-        this.setState(prevState => ({
-            ...prevState,
-            currentRoom: {
-                ...prevState.currentRoom,
-                message: appendedMessage
-            }
-        }));
-    };
+    componentDidUpdate(prevProps) {
+        console.log(prevProps === this.props);
+    }
 
-    onSpeak = e => {
-        const { currentRoom } = this.state;
-        const { activeRoomID, addNewMessage, userInformation } = this.context;
-        if (e.key === "Enter") {
-            let newMessageEntry = {
-                date: Math.floor(Date.now() / 1000),
-                message: currentRoom.message,
-                sender: userInformation.user.displayName
-                    ? userInformation.user.displayName
-                    : "Anonymous",
-                roomid: activeRoomID
-            };
-
-            addNewMessage(newMessageEntry);
-
-            this.setState(prevState => ({
-                ...prevState,
-                currentRoom: {
-                    ...prevState.currentRoom,
-                    message: ""
-                }
-            }));
+    scrollToBottom = () => {
+        let innerItem = document.getElementsByClassName("frightbar-inner")[0];
+        if (innerItem) {
+            innerItem.scrollTop = innerItem.scrollHeight;
         }
     };
 
@@ -71,11 +51,15 @@ class Conversation extends Component {
                         <ConversationConsumer>
                             {({
                                 rooms,
+                                message,
+                                onSpeakBarChange,
+                                onSpeakBarSpoken,
                                 messages,
                                 activeRoomID,
                                 toggleConversationSettingsModal,
                                 conversationSettingsModalDisplayed,
-                                userInformation
+                                userInformation,
+                                leaveRoom
                             }) => {
                                 let theRoom = rooms.filter(
                                     room => room.rid === activeRoomID
@@ -83,15 +67,6 @@ class Conversation extends Component {
 
                                 return (
                                     <div className="frightbar">
-                                        <input
-                                            type="text"
-                                            id="toCopyURL"
-                                            value={
-                                                activeRoomID ? activeRoomID : ""
-                                            }
-                                            readOnly
-                                            hidden
-                                        />
                                         <div className="frightbar-top">
                                             <div>
                                                 <UserAvatar
@@ -179,11 +154,9 @@ class Conversation extends Component {
                                                 })}
                                         </div>
                                         <SpeakBar
-                                            _onChange={this.onSpeakBarType}
-                                            _onSpeak={this.onSpeak}
-                                            message={
-                                                this.state.currentRoom.message
-                                            }
+                                            _onChange={onSpeakBarChange}
+                                            _onSpeak={onSpeakBarSpoken}
+                                            message={message}
                                         />
                                         <Modal
                                             style={{
@@ -209,6 +182,14 @@ class Conversation extends Component {
                                                               .displayName
                                                         : otherUser
                                                 }
+                                                roomNote={() =>
+                                                    theRoom[0]
+                                                        ? theRoom[0].note
+                                                        : "Unknown Room Note"
+                                                }
+                                                leaveRoom={() =>
+                                                    leaveRoom(theRoom[0].rid)
+                                                }
                                             />
                                         </Modal>
                                     </div>
@@ -222,7 +203,35 @@ class Conversation extends Component {
     }
 }
 
-const ConversationSettings = ({ me, close, rid }) => {
+const SpeakBar = ({ _onChange, _onSpeak, message }) => {
+    return (
+        <div className="speakbar">
+            <input
+                onChange={_onChange}
+                onKeyDown={e => {
+                    _onSpeak(e);
+                }}
+                type="text"
+                placeholder="Type your message here .."
+                value={message}
+            />
+            <ul>
+                <li>
+                    <a href="/">
+                        <Icon icon="fas fa-paperclip" />
+                    </a>
+                </li>
+                <li>
+                    <a href="/">
+                        <Icon icon="fas fa-file-image" />
+                    </a>
+                </li>
+            </ul>
+        </div>
+    );
+};
+
+const ConversationSettings = ({ me, close, rid, roomNote, leaveRoom }) => {
     return (
         <div
             className="modal-container"
@@ -258,6 +267,20 @@ const ConversationSettings = ({ me, close, rid }) => {
                 </div>
                 <div>
                     <div>
+                        <label htmlFor="change-note">Note</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            name="change-note"
+                            className="text-input"
+                            placeholder="Edit/Enter note to identify this conversation/room."
+                            defaultValue={roomNote}
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
                         <label htmlFor="private-key">Private Key</label>
                     </div>
                     <div>
@@ -273,7 +296,9 @@ const ConversationSettings = ({ me, close, rid }) => {
                     <button className="button" onClick={close}>
                         Close
                     </button>
-                    <button className="button warn">Leave Conversation</button>
+                    <button className="button warn" onClick={leaveRoom}>
+                        Leave Conversation
+                    </button>
                     <button className="button inform">Update</button>
                 </div>
             </form>
