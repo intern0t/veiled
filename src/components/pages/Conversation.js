@@ -4,23 +4,15 @@ import Tip from "../Tip";
 import Icon from "../Icon";
 import Modal from "../Modal";
 import Message from "../Message";
-import SpeakBar from "../SpeakBar";
 import UserAvatar from "../UserAvatar";
 import { copyToClipboard } from "../../contexts/Library";
 import { AppConsumer } from "../../contexts/AppProvider";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
 class Conversation extends Component {
-    state = {
-        currentRoom: {
-            message: ""
-        }
-    };
-
     componentDidMount() {
-        console.log(`Conv. mounted with ${this.props.match.params.roomid}`);
         const { match } = this.props;
-        const { veil, rooms, activeRoomID, changeActiveRoom } = this.context;
+        const { activeRoomID, changeActiveRoom } = this.context;
 
         if (
             match &&
@@ -29,74 +21,24 @@ class Conversation extends Component {
             match.params.roomid !== activeRoomID
         ) {
             changeActiveRoom(match.params.roomid || "r-general");
-            // Let's join the room.
-            if (veil) {
-                rooms.map(room => {
-                    veil.emit("join", { roomid: room.rid });
-                });
-            }
         }
+
+        console.log(
+            `Conversation window mounted with conversation for roomid: ${
+                match.params.roomid
+            }.`
+        );
     }
 
     componentDidUpdate(prevProps) {
-        const { veil } = this.context;
-        veil.on("notification", notification => {
-            console.log({
-                notification: notification
-            });
-        });
-
-        veil.on("message", data => {
-            this.onMessageReceived(data);
-        });
+        console.log(prevProps === this.props);
     }
 
-    onSpeakBarType = e => {
-        let appendedMessage = e.target.value || "";
-        this.setState(prevState => ({
-            ...prevState,
-            currentRoom: {
-                ...prevState.currentRoom,
-                message: appendedMessage
-            }
-        }));
-    };
-
-    onSpeak = e => {
-        const { currentRoom } = this.state;
-        const { activeRoomID, addNewMessage, userInformation } = this.context;
-        if (e.key === "Enter") {
-            let newMessageEntry = {
-                date: Math.floor(Date.now() / 1000),
-                message: currentRoom.message,
-                sender: userInformation.user.displayName
-                    ? userInformation.user.displayName
-                    : "Anonymous",
-                roomid: activeRoomID
-            };
-
-            addNewMessage(newMessageEntry);
-
-            this.onSendMessage(newMessageEntry);
-
-            this.setState(prevState => ({
-                ...prevState,
-                currentRoom: {
-                    ...prevState.currentRoom,
-                    message: ""
-                }
-            }));
+    scrollToBottom = () => {
+        let innerItem = document.getElementsByClassName("frightbar-inner")[0];
+        if (innerItem) {
+            innerItem.scrollTop = innerItem.scrollHeight;
         }
-    };
-
-    onSendMessage = messageEntry => {
-        const { veil, activeRoomID } = this.context;
-        veil.emit("message", messageEntry);
-    };
-
-    onMessageReceived = messageEntry => {
-        const { addNewMessage } = this.context;
-        addNewMessage(messageEntry);
     };
 
     render() {
@@ -109,6 +51,9 @@ class Conversation extends Component {
                         <ConversationConsumer>
                             {({
                                 rooms,
+                                message,
+                                onSpeakBarChange,
+                                onSpeakBarSpoken,
                                 messages,
                                 activeRoomID,
                                 toggleConversationSettingsModal,
@@ -122,15 +67,6 @@ class Conversation extends Component {
 
                                 return (
                                     <div className="frightbar">
-                                        <input
-                                            type="text"
-                                            id="toCopyURL"
-                                            value={
-                                                activeRoomID ? activeRoomID : ""
-                                            }
-                                            readOnly
-                                            hidden
-                                        />
                                         <div className="frightbar-top">
                                             <div>
                                                 <UserAvatar
@@ -218,11 +154,9 @@ class Conversation extends Component {
                                                 })}
                                         </div>
                                         <SpeakBar
-                                            _onChange={this.onSpeakBarType}
-                                            _onSpeak={this.onSpeak}
-                                            message={
-                                                this.state.currentRoom.message
-                                            }
+                                            _onChange={onSpeakBarChange}
+                                            _onSpeak={onSpeakBarSpoken}
+                                            message={message}
                                         />
                                         <Modal
                                             style={{
@@ -268,6 +202,34 @@ class Conversation extends Component {
         );
     }
 }
+
+const SpeakBar = ({ _onChange, _onSpeak, message }) => {
+    return (
+        <div className="speakbar">
+            <input
+                onChange={_onChange}
+                onKeyDown={e => {
+                    _onSpeak(e);
+                }}
+                type="text"
+                placeholder="Type your message here .."
+                value={message}
+            />
+            <ul>
+                <li>
+                    <a href="/">
+                        <Icon icon="fas fa-paperclip" />
+                    </a>
+                </li>
+                <li>
+                    <a href="/">
+                        <Icon icon="fas fa-file-image" />
+                    </a>
+                </li>
+            </ul>
+        </div>
+    );
+};
 
 const ConversationSettings = ({ me, close, rid, roomNote, leaveRoom }) => {
     return (

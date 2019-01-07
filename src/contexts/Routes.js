@@ -7,10 +7,8 @@ import Settings from "../components/pages/Settings";
 import Bugs from "../components/pages/Bugs";
 import Archive from "../components/pages/Archive";
 import { AppProvider } from "../contexts/AppProvider";
-import {
-    ConversationProvider,
-} from "../contexts/ConversationProvider";
-import {  Switch, Route } from "react-router-dom";
+import { ConversationProvider } from "../contexts/ConversationProvider";
+import { Switch, Route } from "react-router-dom";
 import Footer from "../components/Footer";
 import PageWrapper from "../components/pages/PageWrapper";
 import SocketWrapper from "../containers/SocketWrapper";
@@ -52,24 +50,20 @@ const ApplicationRouter = () => {
                                 <Route
                                     exact
                                     path="/settings"
-                                    component={props => {
-                                        return (
-                                            <PageWrapper {...props}>
-                                                <Settings {...props} />
-                                            </PageWrapper>
-                                        );
-                                    }}
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <Settings {...props} />
+                                        </PageWrapper>
+                                    )}
                                 />
                                 <Route
                                     exact
                                     path="/bugs"
-                                    component={props => {
-                                        return (
-                                            <PageWrapper {...props}>
-                                                <Bugs {...props} />
-                                            </PageWrapper>
-                                        );
-                                    }}
+                                    component={props => (
+                                        <PageWrapper {...props}>
+                                            <Bugs {...props} />
+                                        </PageWrapper>
+                                    )}
                                 />
                                 <Route
                                     exact

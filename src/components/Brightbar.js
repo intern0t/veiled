@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import TipCounter from "./TipCounter";
 import UserAvatar from "./UserAvatar";
 import { generateRandomColorCode } from "../contexts/Library";
-import { BrowserRouter as Router, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppConsumer } from "../contexts/AppProvider";
 import { ConversationConsumer } from "../contexts/ConversationProvider";
 
