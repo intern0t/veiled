@@ -6,20 +6,19 @@ import Modal from "../Modal";
 import Message from "../Message";
 import UserAvatar from "../UserAvatar";
 import { copyToClipboard } from "../../contexts/Library";
-import { AppConsumer } from "../../contexts/AppProvider";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
 class Conversation extends Component {
+    state = {
+        conversationSettingsModalDisplayed: false,
+        message: ""
+    };
+
     componentDidMount() {
         const { match } = this.props;
-        const { activeRoomID, changeActiveRoom } = this.context;
+        const { changeActiveRoom } = this.context;
 
-        if (
-            match &&
-            match.params &&
-            match.params.roomid &&
-            match.params.roomid !== activeRoomID
-        ) {
+        if (match && match.params && match.params.roomid) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
 
@@ -31,174 +30,169 @@ class Conversation extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log(prevProps === this.props);
+        const { match } = this.props;
+        const { activeRoomID, changeActiveRoom } = this.context;
+
+        if (
+            prevProps.match.params.roomid &&
+            this.props.match.params.roomid &&
+            activeRoomID &&
+            prevProps.match.params.roomid !== activeRoomID
+        ) {
+            changeActiveRoom(match.params.roomid || "r-general");
+        }
     }
 
-    scrollToBottom = () => {
-        let innerItem = document.getElementsByClassName("frightbar-inner")[0];
-        if (innerItem) {
-            innerItem.scrollTop = innerItem.scrollHeight;
+    toggleConversationSettingsModal = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            conversationSettingsModalDisplayed: !this.state
+                .conversationSettingsModalDisplayed
+        }));
+    };
+
+    onSpeakBarChange = e => {
+        let appendedMessage = e.target.value || "";
+        this.setState(prevState => ({
+            ...prevState,
+            message: appendedMessage
+        }));
+    };
+
+    onSpeakBarSpoken = e => {
+        const { message } = this.state;
+        const {
+            activeRoomID,
+            user,
+            addNewMessage,
+            onSendMessage
+        } = this.context;
+        if (e.key === "Enter") {
+            if (message && message.length > 0) {
+                let newMessageEntry = {
+                    date: Math.floor(Date.now() / 1000),
+                    message: message,
+                    sender: user ? user : "You",
+                    roomid: activeRoomID
+                };
+
+                console.log(newMessageEntry);
+
+                addNewMessage(newMessageEntry);
+
+                onSendMessage(newMessageEntry);
+
+                this.setState(prevState => ({
+                    ...prevState,
+                    message: ""
+                }));
+            }
         }
     };
 
     render() {
-        let otherUser = "You";
-
+        let otherUser = "Anonymous";
         return (
-            <AppConsumer>
-                {stuff => {
+            <ConversationConsumer>
+                {({ rooms, messages, activeRoomID, me, leaveRoom }) => {
+                    let theRoom = rooms.filter(
+                        room => room.rid === activeRoomID
+                    );
                     return (
-                        <ConversationConsumer>
-                            {({
-                                rooms,
-                                message,
-                                onSpeakBarChange,
-                                onSpeakBarSpoken,
-                                messages,
-                                activeRoomID,
-                                toggleConversationSettingsModal,
-                                conversationSettingsModalDisplayed,
-                                userInformation,
-                                leaveRoom
-                            }) => {
-                                let theRoom = rooms.filter(
-                                    room => room.rid === activeRoomID
-                                );
-
-                                return (
-                                    <div className="frightbar">
-                                        <div className="frightbar-top">
-                                            <div>
-                                                <UserAvatar
-                                                    username={
-                                                        theRoom &&
-                                                        theRoom.length > 0 &&
-                                                        theRoom[0].note
-                                                            ? theRoom[0].note
-                                                            : otherUser
-                                                    }
-                                                />
-                                                {theRoom &&
-                                                theRoom.length > 0 &&
-                                                theRoom[0].note
-                                                    ? `${theRoom[0].note} `
-                                                    : otherUser}
-                                                <Tip
-                                                    updated={true}
-                                                    color="#82D455"
-                                                    title={"Online"}
-                                                />
+                        <div className="frightbar">
+                            {/* <div className="frightbar-notification">
+                                            <div className="frightbar-notification-message-container">
+                                                hi hi
                                             </div>
-                                            <div>
-                                                <Icon
-                                                    icon={"fas fa-link"}
-                                                    title="Share conversation"
-                                                    onClick={copyToClipboard}
-                                                    style={{
-                                                        cursor: "pointer"
-                                                    }}
-                                                />
+                                        </div> */}
+                            <div className="frightbar-top">
+                                <div>
+                                    <UserAvatar
+                                        username={
+                                            theRoom &&
+                                            theRoom.length > 0 &&
+                                            theRoom[0].note
+                                                ? theRoom[0].note
+                                                : otherUser
+                                        }
+                                    />
+                                    {theRoom &&
+                                    theRoom.length > 0 &&
+                                    theRoom[0].note
+                                        ? `${theRoom[0].note} `
+                                        : otherUser}
+                                    <Tip
+                                        updated={true}
+                                        color="#82D455"
+                                        title={"Online"}
+                                    />
+                                </div>
+                                <div>
+                                    <Icon
+                                        icon={"fas fa-link"}
+                                        title="Share conversation"
+                                        onClick={copyToClipboard}
+                                        style={{
+                                            cursor: "pointer"
+                                        }}
+                                    />
 
-                                                <Icon
-                                                    icon={"fas fa-cog"}
-                                                    title={
-                                                        "Conversation Settings"
-                                                    }
-                                                    onClick={e =>
-                                                        toggleConversationSettingsModal(
-                                                            e
-                                                        )
-                                                    }
-                                                    style={{
-                                                        cursor: "pointer"
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="frightbar-inner">
-                                            {messages
-                                                .filter(
-                                                    messageEntry =>
-                                                        messageEntry.roomid ===
-                                                        activeRoomID
-                                                )
-                                                .map(messageEntry => {
-                                                    return (
-                                                        <Message
-                                                            key={uuidv4()}
-                                                            me={
-                                                                userInformation &&
-                                                                userInformation.user &&
-                                                                userInformation
-                                                                    .user
-                                                                    .displayName
-                                                                    ? userInformation
-                                                                          .user
-                                                                          .displayName
-                                                                    : otherUser
-                                                            }
-                                                            from={
-                                                                messageEntry &&
-                                                                messageEntry.sender
-                                                                    ? messageEntry.sender
-                                                                    : "Anonymous"
-                                                            }
-                                                            timestamp={
-                                                                messageEntry.date
-                                                            }
-                                                            message={
-                                                                messageEntry.message
-                                                            }
-                                                        />
-                                                    );
-                                                })}
-                                        </div>
-                                        <SpeakBar
-                                            _onChange={onSpeakBarChange}
-                                            _onSpeak={onSpeakBarSpoken}
-                                            message={message}
-                                        />
-                                        <Modal
-                                            style={{
-                                                display:
-                                                    conversationSettingsModalDisplayed &&
-                                                    conversationSettingsModalDisplayed ===
-                                                        true
-                                                        ? "flex"
-                                                        : "none"
-                                            }}
-                                        >
-                                            <ConversationSettings
-                                                close={
-                                                    toggleConversationSettingsModal
+                                    <Icon
+                                        icon={"fas fa-cog"}
+                                        title={"Conversation Settings"}
+                                        onClick={
+                                            this.toggleConversationSettingsModal
+                                        }
+                                        style={{
+                                            cursor: "pointer"
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="frightbar-inner">
+                                {messages
+                                    .filter(
+                                        messageEntry =>
+                                            messageEntry.roomid === activeRoomID
+                                    )
+                                    .map(messageEntry => {
+                                        return (
+                                            <Message
+                                                key={uuidv4()}
+                                                me={me}
+                                                from={
+                                                    messageEntry &&
+                                                    messageEntry.sender
+                                                        ? messageEntry.sender
+                                                        : "Anonymous"
                                                 }
-                                                rid={activeRoomID}
-                                                me={
-                                                    userInformation &&
-                                                    userInformation.user &&
-                                                    userInformation.user
-                                                        .displayName
-                                                        ? userInformation.user
-                                                              .displayName
-                                                        : otherUser
-                                                }
-                                                roomNote={() =>
-                                                    theRoom[0]
-                                                        ? theRoom[0].note
-                                                        : "Unknown Room Note"
-                                                }
-                                                leaveRoom={() =>
-                                                    leaveRoom(theRoom[0].rid)
-                                                }
+                                                timestamp={messageEntry.date}
+                                                message={messageEntry.message}
                                             />
-                                        </Modal>
-                                    </div>
-                                );
-                            }}
-                        </ConversationConsumer>
+                                        );
+                                    })}
+                            </div>
+                            <SpeakBar
+                                _onChange={this.onSpeakBarChange}
+                                _onSpeak={this.onSpeakBarSpoken}
+                                message={this.state.message}
+                            />
+
+                            {this.state.conversationSettingsModalDisplayed ? (
+                                <Modal>
+                                    <ConversationSettings
+                                        close={
+                                            this.toggleConversationSettingsModal
+                                        }
+                                        me={me}
+                                        currentRoom={theRoom[0]}
+                                    />
+                                </Modal>
+                            ) : null}
+                        </div>
                     );
                 }}
-            </AppConsumer>
+            </ConversationConsumer>
         );
     }
 }
@@ -208,9 +202,7 @@ const SpeakBar = ({ _onChange, _onSpeak, message }) => {
         <div className="speakbar">
             <input
                 onChange={_onChange}
-                onKeyDown={e => {
-                    _onSpeak(e);
-                }}
+                onKeyDown={_onSpeak}
                 type="text"
                 placeholder="Type your message here .."
                 value={message}
@@ -231,19 +223,19 @@ const SpeakBar = ({ _onChange, _onSpeak, message }) => {
     );
 };
 
-const ConversationSettings = ({ me, close, rid, roomNote, leaveRoom }) => {
+const ConversationSettings = ({ me, currentRoom, close, leaveRoom }) => {
     return (
-        <div
-            className="modal-container"
-            onClick={e => {
-                return false;
-            }}
-        >
+        <div className="modal-container">
             <div>
                 <Icon icon="fas fa-exclamation" color={"#F36060"} />
                 <span>
                     You are updating or editing settings for Conversation ID -
-                    <b>{rid || "Anonymous"}</b>.
+                    <b>
+                        {currentRoom && currentRoom.rid
+                            ? currentRoom.rid
+                            : "Anonymous"}
+                    </b>
+                    .
                 </span>
             </div>
             <form
@@ -275,7 +267,11 @@ const ConversationSettings = ({ me, close, rid, roomNote, leaveRoom }) => {
                             name="change-note"
                             className="text-input"
                             placeholder="Edit/Enter note to identify this conversation/room."
-                            defaultValue={roomNote}
+                            defaultValue={
+                                currentRoom && currentRoom.note
+                                    ? currentRoom.note
+                                    : ""
+                            }
                         />
                     </div>
                 </div>
@@ -293,13 +289,19 @@ const ConversationSettings = ({ me, close, rid, roomNote, leaveRoom }) => {
                     </div>
                 </div>
                 <div className="buttons-wrapper">
-                    <button className="button" onClick={close}>
+                    <button type="button" className="button" onClick={close}>
                         Close
                     </button>
-                    <button className="button warn" onClick={leaveRoom}>
+                    <button
+                        type="button"
+                        className="button warn"
+                        onClick={leaveRoom}
+                    >
                         Leave Conversation
                     </button>
-                    <button className="button inform">Update</button>
+                    <button type="button" className="button inform">
+                        Update
+                    </button>
                 </div>
             </form>
         </div>

@@ -47,11 +47,7 @@ export class ConversationProvider extends Component {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
-        userInformation: {
-            user: {
-                displayName: "Prashant Shrestha"
-            }
-        },
+        user: "Prashant Shrestha",
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
@@ -135,15 +131,13 @@ export class ConversationProvider extends Component {
     };
 
     onSpeakBarSpoken = e => {
-        const { activeRoomID, message, userInformation } = this.state;
+        const { activeRoomID, message, user } = this.state;
         if (e.key === "Enter") {
             if (message && message.length > 0) {
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
                     message: message,
-                    sender: userInformation.user.displayName
-                        ? userInformation.user.displayName
-                        : "Anonymous",
+                    sender: user ? user : "You",
                     roomid: activeRoomID
                 };
 
@@ -216,6 +210,7 @@ export class ConversationProvider extends Component {
                     message: this.state.message,
                     onSpeakBarChange: this.onSpeakBarChange,
                     onSpeakBarSpoken: this.onSpeakBarSpoken,
+                    onSendMessage: this.onSendMessage,
                     addNewMessage: this.addNewMessage,
                     conversationSettingsModalDisplayed: this.state.modals
                         .conversationSettingsModalDisplayed,
@@ -224,7 +219,7 @@ export class ConversationProvider extends Component {
                     toggleConversationSettingsModal: this
                         .toggleConversationSettingsModal,
                     toggleNewConversationModal: this.toggleNewConversationModal,
-                    userInformation: this.state.userInformation,
+                    me: this.state.user,
                     leaveRoom: this.onRoomLeave
                 }}
             >

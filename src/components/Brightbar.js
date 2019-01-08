@@ -43,7 +43,7 @@ class Brightbar extends Component {
                         <ConversationConsumer>
                             {({
                                 rooms,
-                                changeActiveRoom,
+                                messages,
                                 toggleNewConversationModal,
                                 newConversationModalDisplayed,
                                 generatedRoomID,
@@ -74,8 +74,8 @@ class Brightbar extends Component {
                                                           <ConversationEntry
                                                               room={room}
                                                               key={uuidv4()}
-                                                              _changeRoom={
-                                                                  changeActiveRoom
+                                                              messages={
+                                                                  messages
                                                               }
                                                           />
                                                       ))
@@ -128,21 +128,29 @@ const ConversationSearch = ({ toggle, onChange, clearFilter, filterBy }) => {
     );
 };
 
-const ConversationEntry = ({ room, _changeRoom }) => {
+const ConversationEntry = ({ room, messages }) => {
     let colorCode = generateRandomColorCode();
-    let newMessages = 11;
+    let messages_ = messages.filter(message => message.roomid === room.rid);
+    let latestMessage =
+        messages_ && messages_.length > 0
+            ? messages_.sort((a, b) => b.date - a.date)[0] ||
+              `Start a conversation with ${room.note}.`
+            : `Start a conversation with ${room.note}.`;
+
     return (
         <li>
             <Link
                 to={`/veiled/${room.rid}`}
                 className="brightbar-conversations-entry"
             >
-                <UserAvatar username={room.note} />
-                <div className="brightbar-conversations-entry-message">
-                    <h1>{room.note ? room.note : "Anonymous"}</h1>
-                    <p>{`Your conversation with ${room.note}..`}</p>
+                <div className="brightbar-conversations-entry-wrapper">
+                    <UserAvatar username={room.note} />
+                    <div className="brightbar-conversations-entry-wrapper-message">
+                        <h1>{room.note ? room.note : "Anonymous"}</h1>
+                        <p>{latestMessage.message}</p>
+                    </div>
                 </div>
-                <TipCounter color={colorCode} newMessages={newMessages} />
+                <TipCounter color={colorCode} newMessages={messages_.length} />
             </Link>
         </li>
     );
