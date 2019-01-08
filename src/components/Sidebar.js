@@ -45,20 +45,6 @@ class Sidebar extends Component {
                             </li>
                             <li>
                                 <Link
-                                    to="/archive"
-                                    title="Archive"
-                                    className={
-                                        currentPage &&
-                                        currentPage === "/archive"
-                                            ? "sidebar-section-active"
-                                            : ""
-                                    }
-                                >
-                                    <Icon icon="fas fa-archive" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to="/settings"
                                     title="Settings"
                                     className={

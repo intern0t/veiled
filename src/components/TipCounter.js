@@ -6,7 +6,7 @@ const TipCounter = ({ color, newMessages }) => {
             className="tip-counter"
             style={{
                 background: "#F36060",
-                display: newMessages ? "block" : "none"
+                display: newMessages && newMessages > 0 ? "block" : "none"
             }}
         >
             {newMessages && newMessages > 10 ? "10+" : newMessages}
