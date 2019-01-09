@@ -80,17 +80,7 @@ const ApplicationRouter = () => {
                             </Switch>
                         </SocketWrapper>
                     </div>
-                    <ConversationConsumer>
-                        {({ veil }) => {
-                            return (
-                                <Footer
-                                    isConnected={
-                                        veil && veil.connected ? true : false
-                                    }
-                                />
-                            );
-                        }}
-                    </ConversationConsumer>
+                    <Footer />
                 </div>
             </ConversationProvider>
         </AppProvider>
