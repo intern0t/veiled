@@ -5,7 +5,7 @@ import Icon from "../Icon";
 import Modal from "../Modal";
 import Message from "../Message";
 import UserAvatar from "../UserAvatar";
-import { copyToClipboard } from "../../contexts/Library";
+import Clipboard from "react-clipboard.js";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
 class Conversation extends Component {
@@ -134,14 +134,24 @@ class Conversation extends Component {
                                     />
                                 </div>
                                 <div>
-                                    <Icon
-                                        icon={"fas fa-link"}
-                                        title="Share conversation"
-                                        onClick={copyToClipboard}
-                                        style={{
-                                            cursor: "pointer"
-                                        }}
-                                    />
+                                    <Clipboard
+                                        component="a"
+                                        button-href="#"
+                                        onClick={e => e.preventDefault()}
+                                        data-clipboard-text={
+                                            window.location.href
+                                        }
+                                        style={{ color: "rgba(54,62,71,0.7)" }}
+                                    >
+                                        <Icon
+                                            icon={"far fa-clipboard"}
+                                            title="Share conversation"
+                                            style={{
+                                                cursor: "pointer",
+                                                marginRight: "5px"
+                                            }}
+                                        />
+                                    </Clipboard>
 
                                     <Icon
                                         icon={"fas fa-cog"}
