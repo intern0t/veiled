@@ -4,7 +4,6 @@ import Tip from "../Tip";
 import Icon from "../Icon";
 import Modal from "../Modal";
 import Message from "../Message";
-import UserAvatar from "../UserAvatar";
 import Clipboard from "react-clipboard.js";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
@@ -97,7 +96,14 @@ class Conversation extends Component {
         let otherUser = "Anonymous";
         return (
             <ConversationConsumer>
-                {({ rooms, messages, activeRoomID, nickname, leaveRoom }) => {
+                {({
+                    rooms,
+                    messages,
+                    activeRoomID,
+                    nickname,
+                    leaveRoom,
+                    setNickname
+                }) => {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
                     );
@@ -207,6 +213,7 @@ class Conversation extends Component {
                                         }
                                         nickname={nickname}
                                         currentRoom={theRoom[0]}
+                                        setNickname={setNickname}
                                     />
                                 </Modal>
                             ) : null}
@@ -244,7 +251,13 @@ const SpeakBar = ({ _onChange, _onSpeak, message }) => {
     );
 };
 
-const ConversationSettings = ({ nickname, currentRoom, close, leaveRoom }) => {
+const ConversationSettings = ({
+    nickname,
+    currentRoom,
+    close,
+    leaveRoom,
+    setNickname
+}) => {
     return (
         <div className="modal-container">
             <div>
@@ -266,15 +279,20 @@ const ConversationSettings = ({ nickname, currentRoom, close, leaveRoom }) => {
             >
                 <div>
                     <div>
-                        <label htmlFor="private-key">Display Name</label>
+                        <label htmlFor="display-name">Display Name</label>
                     </div>
                     <div>
                         <input
                             type="text"
-                            name="private-key"
+                            name="display-name"
                             className="text-input"
                             placeholder="Display name for this conversation."
                             defaultValue={nickname}
+                            onKeyDown={e => {
+                                return e && e.key === "Enter"
+                                    ? setNickname(e.target.value)
+                                    : null;
+                            }}
                         />
                     </div>
                 </div>

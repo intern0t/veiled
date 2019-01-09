@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { generateRoomID } from "./Library";
-import { generateNickName } from './Library';
+import { generateNickName } from "./Library";
 
 // Implementing Sockets
 import { BACKEND_URL } from "../config";
@@ -34,10 +34,19 @@ export class ConversationProvider extends Component {
      */
     componentDidMount() {
         let roomsFromLocalStorage = localStorage.getItem("rooms");
+        let nicknameFromLocalStorage = localStorage.getItem("nickname");
+
         if (roomsFromLocalStorage) {
             this.setState(prevState => ({
                 ...prevState,
                 rooms: JSON.parse(roomsFromLocalStorage)
+            }));
+        }
+
+        if (nicknameFromLocalStorage) {
+            this.setState(prevState => ({
+                ...prevState,
+                nickname: nicknameFromLocalStorage
             }));
         }
 
@@ -121,7 +130,7 @@ export class ConversationProvider extends Component {
                     roomid: activeRoomID
                 };
 
-                console.log(nickname)
+                console.log(nickname);
 
                 this.addNewMessage(newMessageEntry);
 
@@ -176,6 +185,17 @@ export class ConversationProvider extends Component {
         }));
     };
 
+    setNickname = nickname => {
+        if (nickname && nickname.length > 3) {
+            this.setState(prevState => ({
+                ...prevState,
+                nickname: nickname
+            }));
+        }
+
+        localStorage.setItem("nickname", this.state.nickname);
+    };
+
     render() {
         const { children } = this.props;
 
@@ -202,6 +222,7 @@ export class ConversationProvider extends Component {
                         .toggleConversationSettingsModal,
                     toggleNewConversationModal: this.toggleNewConversationModal,
                     nickname: this.state.nickname,
+                    setNickname: this.setNickname,
                     leaveRoom: this.onRoomLeave
                 }}
             >

@@ -14,7 +14,7 @@ const generateRoomID = () => {
 };
 
 const generateNickName = () => {
-    return `u-${uuidv4().split("-")}`;
+    return `u-${uuidv4().split("-")[0]}`;
 };
 
 export { generateRandomColorCode, generateRoomID, generateNickName };
