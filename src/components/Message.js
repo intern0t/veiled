@@ -11,7 +11,7 @@ const Message = ({ me, timestamp, message, from }) => {
                 style={{ flexDirection: yourMessages ? "row-reverse" : "row" }}
             >
                 <span className="from">
-                    <UserAvatar username={from} />
+                    <UserAvatar username={from} title={from} />
                 </span>
                 <div className="message-wrapper">
                     <span

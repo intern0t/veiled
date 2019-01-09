@@ -175,7 +175,7 @@ body {
 
                 &-notification {
                     width: 100%;
-                    background: rgba($BrightGray, 0.95);
+                    background: rgba($BrightGray, 1);
 
                     &-message-container {
                         @include Flex(row);
@@ -185,7 +185,7 @@ body {
                         padding: 10px;
 
                         span[class^="fa"] {
-                            margin-right: 5px;
+                            margin-left: 15px;
                         }
 
                         .notification-message {
@@ -195,7 +195,7 @@ body {
                             line-height: $defaultFontSize + 1;
                             padding: 2px;
                             flex: 1;
-                            margin-left: 20px;
+                            margin-left: 15px;
                             text-overflow: ellipsis;
                             max-height: $defaultFontSize + 1;
                         }
@@ -391,6 +391,15 @@ body {
                     color: $GullGray;
                     text-decoration: none;
                     font-weight: bold;
+                    margin: 0 5px;
+                    @include Flex(row);
+                    align-content: center;
+                    align-items: center;
+
+                    span[class^="fa"]{
+                        margin-left: 5px;
+                        font-size: $defaultFontSize;
+                    }
                 }
             }
         }
