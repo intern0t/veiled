@@ -138,7 +138,7 @@ const ConversationSearch = ({ toggle, onChange, clearFilter, filterBy }) => {
 const ConversationEntry = ({ room, messages, activeRoomID, nickname }) => {
     let colorCode = generateRandomColorCode();
     let messages_ = messages.filter(
-        message => message.roomid === room.rid && message.sender !== nickname
+        message => message.roomid === room.rid && message.nickname !== nickname
     );
     let latestMessage =
         messages_ && messages_.length > 0
@@ -162,11 +162,14 @@ const ConversationEntry = ({ room, messages, activeRoomID, nickname }) => {
                         icon={`${
                             currentlyActive ? "fas" : "far"
                         } fa-comment-alt`}
-                        color={currentlyActive ? "#00EA7E" : "#99a8b4"}
+                        color={currentlyActive ? "#55A7D4" : "#99a8b4"}
                     />
                     <div className="brightbar-conversations-entry-wrapper-message">
                         <h1>{room.note ? room.note : "Anonymous"}</h1>
-                        <p>{latestMessage.message}</p>
+                        <p>
+                            {latestMessage.message ||
+                                `Your conversation in ${room.note}.`}
+                        </p>
                     </div>
                 </div>
                 <TipCounter color={colorCode} newMessages={messages_.length} />

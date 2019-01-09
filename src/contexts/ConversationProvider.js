@@ -12,33 +12,8 @@ export class ConversationProvider extends Component {
         rooms: [
             {
                 rid: "r-f0d6c1a6",
-                note: "Vicky",
-                key: "test"
-            },
-            {
-                rid: "r-9f0205ea",
-                note: "Edward",
-                key: "test"
-            },
-            {
-                rid: "r-bef987aa",
-                note: "Issac",
-                key: "test"
-            },
-            {
-                rid: "r-f4df580b",
-                note: "Lewis",
-                key: "test"
-            },
-            {
-                rid: "r-bd2bd857",
-                note: "Elizabeth",
-                key: "test"
-            },
-            {
-                rid: "r-2b7d7cc5",
-                note: "Diego",
-                key: "test"
+                note: "Veiled",
+                key: "general"
             }
         ],
         message: "", // input default value can't be null so..
@@ -112,7 +87,7 @@ export class ConversationProvider extends Component {
     addNewMessage = newMessageEntry => {
         if (
             !this.state.messages.find(message => {
-                return message.message === newMessageEntry.message;
+                return message.date === newMessageEntry.date;
             })
         ) {
             this.setState(prevState => ({
@@ -137,7 +112,7 @@ export class ConversationProvider extends Component {
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
                     message: message,
-                    sender: user ? user : "You",
+                    nickname: user ? user : "You",
                     roomid: activeRoomID
                 };
 

@@ -43,6 +43,11 @@ class Conversation extends Component {
         ) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
+
+        const conversationWindow = document.getElementById(
+            "conversation-window"
+        );
+        conversationWindow.scrollTop = conversationWindow.scrollHeight;
     }
 
     toggleConversationSettingsModal = () => {
@@ -74,7 +79,7 @@ class Conversation extends Component {
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
                     message: message,
-                    sender: nickname || "You",
+                    nickname: nickname || "You",
                     roomid: activeRoomID
                 };
 
@@ -98,34 +103,14 @@ class Conversation extends Component {
                     );
                     return (
                         <div className="frightbar">
-                            <div className="frightbar-notification">
-                                <div className="frightbar-notification-message-container">
-                                    <Icon
-                                        icon="far fa-bell"
-                                        color={`${
-                                            this.state.notificationAvailable
-                                                ? "#F36060"
-                                                : "#99a8b4"
-                                        }`}
-                                    />
-                                    <span className="notification-message">
-                                        {this.state.notificationMessage
-                                            ? this.state.notificationMessage
-                                            : "Seems like you are all caught up!"}
-                                    </span>
-                                    <div className="notification-controls">
-                                        <Icon
-                                            icon="fas fa-check"
-                                            color={`${
-                                                this.state.notificationAvailable
-                                                    ? "#F36060"
-                                                    : "#99a8b4"
-                                            }`}
-                                            title="Mark all notifications as read."
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <Notification
+                                notificationAvailable={
+                                    this.state.notificationAvailable
+                                }
+                                notificationMessage={
+                                    this.state.notificationMessage
+                                }
+                            />
                             <div className="frightbar-top">
                                 <div>
                                     <UserAvatar
@@ -170,7 +155,10 @@ class Conversation extends Component {
                                     />
                                 </div>
                             </div>
-                            <div className="frightbar-inner">
+                            <div
+                                className="frightbar-inner"
+                                id="conversation-window"
+                            >
                                 {messages
                                     .filter(
                                         messageEntry =>
@@ -183,8 +171,8 @@ class Conversation extends Component {
                                                 me={nickname}
                                                 from={
                                                     messageEntry &&
-                                                    messageEntry.sender
-                                                        ? messageEntry.sender
+                                                    messageEntry.nickname
+                                                        ? messageEntry.nickname
                                                         : "Anonymous"
                                                 }
                                                 timestamp={messageEntry.date}
@@ -325,6 +313,33 @@ const ConversationSettings = ({ nickname, currentRoom, close, leaveRoom }) => {
                     </button>
                 </div>
             </form>
+        </div>
+    );
+};
+
+const Notification = ({ notificationAvailable, notificationMessage }) => {
+    return (
+        <div className="frightbar-notification">
+            <div className="frightbar-notification-message-container">
+                <Icon
+                    icon="far fa-bell"
+                    color={`${notificationAvailable ? "#F36060" : "#99a8b4"}`}
+                />
+                <span className="notification-message">
+                    {notificationMessage
+                        ? notificationMessage
+                        : "Seems like you are all caught up!"}
+                </span>
+                <div className="notification-controls">
+                    <Icon
+                        icon="fas fa-check"
+                        color={`${
+                            notificationAvailable ? "#F36060" : "#99a8b4"
+                        }`}
+                        title="Mark all notifications as read."
+                    />
+                </div>
+            </div>
         </div>
     );
 };
