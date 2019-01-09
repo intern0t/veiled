@@ -47,7 +47,7 @@ export class ConversationProvider extends Component {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
-        user: "Prashant Shrestha",
+        nickname: "Prashant Shrestha",
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
@@ -219,7 +219,7 @@ export class ConversationProvider extends Component {
                     toggleConversationSettingsModal: this
                         .toggleConversationSettingsModal,
                     toggleNewConversationModal: this.toggleNewConversationModal,
-                    me: this.state.user,
+                    nickname: this.state.nickname,
                     leaveRoom: this.onRoomLeave
                 }}
             >

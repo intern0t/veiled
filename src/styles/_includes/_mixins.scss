@@ -48,3 +48,8 @@
         border-top-right-radius: $radii;
     }
 }
+
+@mixin Box-Shadow($content...) {
+    -webkit-box-shadow: $content;
+            box-shadow: $content;
+}

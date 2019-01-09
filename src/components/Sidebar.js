@@ -23,8 +23,7 @@ class Sidebar extends Component {
                                             : ""
                                     }
                                 >
-                                    <Tip updated={true} color={"#55A7D4"} />
-                                    <Icon icon="fas fa-comment-dots" />
+                                    <Icon icon="fas fa-home" />
                                 </Link>
                             </li>
                             <li>
@@ -39,7 +38,7 @@ class Sidebar extends Component {
                                             : ""
                                     }
                                 >
-                                    <Tip updated={true} />
+                                    <Tip updated={true} color={"#FF4E00"} />
                                     <Icon icon="fas fa-comments" />
                                 </Link>
                             </li>
@@ -59,6 +58,27 @@ class Sidebar extends Component {
                             </li>
                             <li>
                                 <Link
+                                    to="/contact"
+                                    title="Contact Us"
+                                    className={
+                                        currentPage &&
+                                        currentPage === "/contact"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Icon
+                                        icon={`fas fa-envelope${
+                                            currentPage &&
+                                            currentPage === "/contact"
+                                                ? "-open"
+                                                : ""
+                                        }`}
+                                    />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     to="/bugs"
                                     title="Report bugs"
                                     className={
@@ -68,6 +88,20 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Icon icon="fas fa-bug" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/contribute"
+                                    title="Contribute"
+                                    className={
+                                        currentPage &&
+                                        currentPage === "/contribute"
+                                            ? "sidebar-section-active"
+                                            : ""
+                                    }
+                                >
+                                    <Icon icon={`fas fa-code-branch`} />
                                 </Link>
                             </li>
                         </ul>

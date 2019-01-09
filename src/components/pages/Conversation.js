@@ -10,8 +10,10 @@ import { ConversationConsumer } from "../../contexts/ConversationProvider";
 
 class Conversation extends Component {
     state = {
+        message: "",
         conversationSettingsModalDisplayed: false,
-        message: ""
+        notificationAvailable: false,
+        notificationMessage: ""
     };
 
     componentDidMount() {
@@ -63,7 +65,7 @@ class Conversation extends Component {
         const { message } = this.state;
         const {
             activeRoomID,
-            user,
+            nickname,
             addNewMessage,
             onSendMessage
         } = this.context;
@@ -72,16 +74,12 @@ class Conversation extends Component {
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
                     message: message,
-                    sender: user ? user : "You",
+                    sender: nickname || "You",
                     roomid: activeRoomID
                 };
 
-                console.log(newMessageEntry);
-
                 addNewMessage(newMessageEntry);
-
                 onSendMessage(newMessageEntry);
-
                 this.setState(prevState => ({
                     ...prevState,
                     message: ""
@@ -94,17 +92,40 @@ class Conversation extends Component {
         let otherUser = "Anonymous";
         return (
             <ConversationConsumer>
-                {({ rooms, messages, activeRoomID, me, leaveRoom }) => {
+                {({ rooms, messages, activeRoomID, nickname, leaveRoom }) => {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
                     );
                     return (
                         <div className="frightbar">
-                            {/* <div className="frightbar-notification">
-                                            <div className="frightbar-notification-message-container">
-                                                hi hi
-                                            </div>
-                                        </div> */}
+                            <div className="frightbar-notification">
+                                <div className="frightbar-notification-message-container">
+                                    <Icon
+                                        icon="far fa-bell"
+                                        color={`${
+                                            this.state.notificationAvailable
+                                                ? "#F36060"
+                                                : "#99a8b4"
+                                        }`}
+                                    />
+                                    <span className="notification-message">
+                                        {this.state.notificationMessage
+                                            ? this.state.notificationMessage
+                                            : "Seems like you are all caught up!"}
+                                    </span>
+                                    <div className="notification-controls">
+                                        <Icon
+                                            icon="fas fa-check"
+                                            color={`${
+                                                this.state.notificationAvailable
+                                                    ? "#F36060"
+                                                    : "#99a8b4"
+                                            }`}
+                                            title="Mark all notifications as read."
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             <div className="frightbar-top">
                                 <div>
                                     <UserAvatar
@@ -159,7 +180,7 @@ class Conversation extends Component {
                                         return (
                                             <Message
                                                 key={uuidv4()}
-                                                me={me}
+                                                me={nickname}
                                                 from={
                                                     messageEntry &&
                                                     messageEntry.sender
@@ -184,7 +205,7 @@ class Conversation extends Component {
                                         close={
                                             this.toggleConversationSettingsModal
                                         }
-                                        me={me}
+                                        nickname={nickname}
                                         currentRoom={theRoom[0]}
                                     />
                                 </Modal>
@@ -223,7 +244,7 @@ const SpeakBar = ({ _onChange, _onSpeak, message }) => {
     );
 };
 
-const ConversationSettings = ({ me, currentRoom, close, leaveRoom }) => {
+const ConversationSettings = ({ nickname, currentRoom, close, leaveRoom }) => {
     return (
         <div className="modal-container">
             <div>
@@ -253,7 +274,7 @@ const ConversationSettings = ({ me, currentRoom, close, leaveRoom }) => {
                             name="private-key"
                             className="text-input"
                             placeholder="Display name for this conversation."
-                            defaultValue={me ? me : "You"}
+                            defaultValue={nickname}
                         />
                     </div>
                 </div>

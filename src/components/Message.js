@@ -4,12 +4,11 @@ import UserAvatar from "./UserAvatar";
 
 const Message = ({ me, timestamp, message, from }) => {
     const yourMessages = me === from;
-    console.log(yourMessages, me, from);
 
     return (
         <div className="message-entry">
             <div
-                style={{ flexDirection: yourMessages ? "row" : "row-reverse" }}
+                style={{ flexDirection: yourMessages ? "row-reverse" : "row" }}
             >
                 <span className="from">
                     <UserAvatar username={from} />
@@ -17,7 +16,7 @@ const Message = ({ me, timestamp, message, from }) => {
                 <div className="message-wrapper">
                     <span
                         className={`message ${
-                            yourMessages ? "message-from" : "message-you"
+                            yourMessages ? "message-you" : "message-from"
                         }`}
                     >
                         {message}
