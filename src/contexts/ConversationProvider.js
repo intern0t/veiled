@@ -22,7 +22,7 @@ export class ConversationProvider extends Component {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
-        nickname: "Prashant Shrestha",
+        nickname: "Hi",
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
