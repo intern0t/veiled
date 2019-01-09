@@ -3,7 +3,6 @@ import uuidv4 from "uuid/v4";
 import Icon from "./Icon";
 import Modal from "./Modal";
 import TipCounter from "./TipCounter";
-import UserAvatar from "./UserAvatar";
 import { generateRandomColorCode } from "../contexts/Library";
 import { Link } from "react-router-dom";
 import { AppConsumer } from "../contexts/AppProvider";
@@ -44,10 +43,12 @@ class Brightbar extends Component {
                             {({
                                 rooms,
                                 messages,
+                                nickname,
                                 toggleNewConversationModal,
                                 newConversationModalDisplayed,
                                 generatedRoomID,
-                                generateRoomID
+                                generateRoomID,
+                                activeRoomID
                             }) => {
                                 return (
                                     <div
@@ -76,6 +77,12 @@ class Brightbar extends Component {
                                                               key={uuidv4()}
                                                               messages={
                                                                   messages
+                                                              }
+                                                              activeRoomID={
+                                                                  activeRoomID
+                                                              }
+                                                              nickname={
+                                                                  nickname
                                                               }
                                                           />
                                                       ))
@@ -128,23 +135,35 @@ const ConversationSearch = ({ toggle, onChange, clearFilter, filterBy }) => {
     );
 };
 
-const ConversationEntry = ({ room, messages }) => {
+const ConversationEntry = ({ room, messages, activeRoomID, nickname }) => {
     let colorCode = generateRandomColorCode();
-    let messages_ = messages.filter(message => message.roomid === room.rid);
+    let messages_ = messages.filter(
+        message => message.roomid === room.rid && message.sender !== nickname
+    );
     let latestMessage =
         messages_ && messages_.length > 0
             ? messages_.sort((a, b) => b.date - a.date)[0] ||
               `Start a conversation with ${room.note}.`
             : `Start a conversation with ${room.note}.`;
+    let currentlyActive = room && room.rid === activeRoomID;
 
     return (
         <li>
             <Link
                 to={`/veiled/${room.rid}`}
-                className="brightbar-conversations-entry"
+                className={
+                    currentlyActive
+                        ? "brightbar-conversations-entry active-conversation-entry"
+                        : "brightbar-conversations-entry"
+                }
             >
                 <div className="brightbar-conversations-entry-wrapper">
-                    <UserAvatar username={room.note} />
+                    <Icon
+                        icon={`${
+                            currentlyActive ? "fas" : "far"
+                        } fa-comment-alt`}
+                        color={currentlyActive ? "#00EA7E" : "#99a8b4"}
+                    />
                     <div className="brightbar-conversations-entry-wrapper-message">
                         <h1>{room.note ? room.note : "Anonymous"}</h1>
                         <p>{latestMessage.message}</p>

@@ -120,6 +120,11 @@ body {
                                 @include Transition(background, 0.2s);
                                 text-decoration: none;
 
+                                span[class^="fa"] {
+                                    font-size: $defaultFontSize * 1.1;
+                                    margin-right: 10px;
+                                }
+
                                 &-message {
                                     margin-left: 10px;
                                     @include Flex(column);
@@ -152,6 +157,10 @@ body {
                                 background: rgba($GullGray, 0.1);
                             }
                         }
+
+                        .active-conversation-entry {
+                            background: rgba($GullGray, 0.1);
+                        }
                     }
                 }
             }
@@ -166,14 +175,37 @@ body {
 
                 &-notification {
                     width: 100%;
-                    position: fixed;
-                    border: 1px solid red;
+                    background: rgba($BrightGray, 0.95);
 
                     &-message-container {
                         @include Flex(row);
-                        justify-content: center;
+                        justify-content: space-between;
+                        align-items: center;
                         align-content: center;
-                        @include BorderRadius(3px);
+                        padding: 10px;
+
+                        span[class^="fa"] {
+                            margin-right: 5px;
+                        }
+
+                        .notification-message {
+                            overflow: hidden;
+                            @include Font($defaultFontFamily);
+                            font-size: $defaultFontSize - 2;
+                            line-height: $defaultFontSize + 1;
+                            padding: 2px;
+                            flex: 1;
+                            margin-left: 20px;
+                            text-overflow: ellipsis;
+                            max-height: $defaultFontSize + 1;
+                        }
+
+                        .notification-controls {
+                            margin: 0 5px;
+                            padding: 0;
+                            font-size: $defaultFontSize;
+                            cursor: pointer;
+                        }
                     }
                 }
 
