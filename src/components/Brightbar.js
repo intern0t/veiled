@@ -161,8 +161,9 @@ const ConversationEntry = ({ room, messages, activeRoomID, nickname }) => {
                     <Icon
                         icon={`${
                             currentlyActive ? "fas" : "far"
-                        } fa-comment-alt`}
+                        } fa-sticky-note`}
                         color={currentlyActive ? "#55A7D4" : "#99a8b4"}
+                        title={"Currently active chatroom."}
                     />
                     <div className="brightbar-conversations-entry-wrapper-message">
                         <h1>{room.note ? room.note : "Anonymous"}</h1>
