@@ -113,13 +113,15 @@ class Conversation extends Component {
                             />
                             <div className="frightbar-top">
                                 <div>
-                                    <UserAvatar
-                                        username={
+                                    <Icon
+                                        icon="fas fa-landmark"
+                                        style={{ fontSize: "16px" }}
+                                        title={
                                             theRoom &&
                                             theRoom.length > 0 &&
                                             theRoom[0].note
                                                 ? theRoom[0].note
-                                                : otherUser
+                                                : "Untitled room."
                                         }
                                     />
                                     {theRoom &&
@@ -342,7 +344,7 @@ const Notification = ({ notificationAvailable, notificationMessage }) => {
                 </span>
                 <div className="notification-controls">
                     <Icon
-                        icon="fas fa-check"
+                        icon="far fa-check-circle"
                         color={`${
                             notificationAvailable ? "#F36060" : "#99a8b4"
                         }`}

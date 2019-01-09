@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { generateRoomID } from "./Library";
+import { generateNickName } from './Library';
+
 // Implementing Sockets
 import { BACKEND_URL } from "../config";
 import io from "socket.io-client";
@@ -22,7 +24,7 @@ export class ConversationProvider extends Component {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
-        nickname: "Hi",
+        nickname: generateNickName(),
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
@@ -87,7 +89,10 @@ export class ConversationProvider extends Component {
     addNewMessage = newMessageEntry => {
         if (
             !this.state.messages.find(message => {
-                return message.date === newMessageEntry.date;
+                return (
+                    message.date === newMessageEntry.date &&
+                    message.message === newMessageEntry.message
+                );
             })
         ) {
             this.setState(prevState => ({
@@ -106,15 +111,17 @@ export class ConversationProvider extends Component {
     };
 
     onSpeakBarSpoken = e => {
-        const { activeRoomID, message, user } = this.state;
+        const { activeRoomID, message, nickname } = this.state;
         if (e.key === "Enter") {
             if (message && message.length > 0) {
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
                     message: message,
-                    nickname: user ? user : "You",
+                    nickname: nickname ? nickname : "You",
                     roomid: activeRoomID
                 };
+
+                console.log(nickname)
 
                 this.addNewMessage(newMessageEntry);
 
