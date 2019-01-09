@@ -24,6 +24,7 @@ const Footer = ({ isConnected }) => {
                     href={GITHUB_REPO || "/"}
                     target="_blank"
                     title="Visit Github Repo."
+                    rel="noopener noreferrer"
                 >
                     {` Veiled `} <Icon icon="fab fa-github-alt" />
                 </a>
