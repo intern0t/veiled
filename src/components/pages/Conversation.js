@@ -7,6 +7,7 @@ import Message from "../Message";
 import Clipboard from "react-clipboard.js";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 import { Link } from "react-router-dom";
+import aes from "crypto-js/aes";
 
 class Conversation extends Component {
     state = {
@@ -41,12 +42,15 @@ class Conversation extends Component {
         ) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
+        this.scrollToBottom();
+    }
 
+    scrollToBottom = () => {
         const conversationWindow = document.getElementById(
             "conversation-window"
         );
         conversationWindow.scrollTop = conversationWindow.scrollHeight;
-    }
+    };
 
     toggleConversationSettingsModal = () => {
         this.setState(prevState => ({
@@ -66,22 +70,21 @@ class Conversation extends Component {
 
     onSpeakBarSpoken = e => {
         const { message } = this.state;
-        const {
-            activeRoomID,
-            nickname,
-            addNewMessage,
-            onSendMessage
-        } = this.context;
+        const { rooms, activeRoomID, nickname, onSendMessage } = this.context;
         if (e.key === "Enter") {
             if (message && message.length > 0) {
+                let currentRoom = rooms.filter(
+                    room => room.rid === activeRoomID
+                )[0];
+                let cipherText = aes.encrypt(message, currentRoom.key);
+                console.log(cipherText.toString());
+
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
-                    message: message,
-                    nickname: nickname || "You",
+                    message: cipherText.toString(),
+                    nickname: nickname ? nickname : "You",
                     roomid: activeRoomID
                 };
-
-                addNewMessage(newMessageEntry);
                 onSendMessage(newMessageEntry);
                 this.setState(prevState => ({
                     ...prevState,
@@ -89,6 +92,7 @@ class Conversation extends Component {
                 }));
             }
         }
+        this.scrollToBottom();
     };
 
     render() {
@@ -101,7 +105,8 @@ class Conversation extends Component {
                     activeRoomID,
                     nickname,
                     leaveRoom,
-                    setNickname
+                    setNickname,
+                    setKey
                 }) => {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
@@ -224,6 +229,7 @@ class Conversation extends Component {
                                         nickname={nickname}
                                         currentRoom={theRoom[0]}
                                         setNickname={setNickname}
+                                        setKey={setKey}
                                     />
                                 </Modal>
                             ) : null}
@@ -266,7 +272,8 @@ const ConversationSettings = ({
     currentRoom,
     close,
     leaveRoom,
-    setNickname
+    setNickname,
+    setKey
 }) => {
     return (
         <div className="modal-container">
@@ -334,6 +341,11 @@ const ConversationSettings = ({
                             className="text-input"
                             name="private-key"
                             placeholder="Used to encrypt and decrypt messages."
+                            onKeyDown={e => {
+                                return e && e.key === "Enter"
+                                    ? setKey(e.target.value)
+                                    : null;
+                            }}
                         />
                     </div>
                 </div>
