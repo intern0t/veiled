@@ -16,6 +16,11 @@ export class ConversationProvider extends Component {
                 rid: "r-f0d6c1a6",
                 note: "Veiled",
                 key: "general"
+            },
+            {
+                rid: "r-c0d6c1a6",
+                note: "Denim",
+                key: "general"
             }
         ],
         message: "", // input default value can't be null so..
@@ -60,6 +65,7 @@ export class ConversationProvider extends Component {
             veil.on("message", data => {
                 this.onMessageReceived(data);
             });
+            // @TODO: Update total users in the room (planned)
             return false;
         });
     }
