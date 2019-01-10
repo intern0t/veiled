@@ -6,13 +6,12 @@ import Modal from "../Modal";
 import Message from "../Message";
 import Clipboard from "react-clipboard.js";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
+import { Link } from "react-router-dom";
 
 class Conversation extends Component {
     state = {
         message: "",
-        conversationSettingsModalDisplayed: false,
-        notificationAvailable: false,
-        notificationMessage: ""
+        conversationSettingsModalDisplayed: false
     };
 
     componentDidMount() {
@@ -107,15 +106,13 @@ class Conversation extends Component {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
                     );
+                    // console.log(theRoom[0].users);
                     return (
                         <div className="frightbar">
                             <Notification
-                                notificationAvailable={
-                                    this.state.notificationAvailable
-                                }
-                                notificationMessage={
-                                    this.state.notificationMessage
-                                }
+                                messages={messages}
+                                nickname={nickname}
+                                activeRoomID={activeRoomID}
                             />
                             <div className="frightbar-top">
                                 <div>
@@ -140,6 +137,19 @@ class Conversation extends Component {
                                         color="#82D455"
                                         title={"Online"}
                                     />
+                                    <span style={{ fontSize: "11px" }}>
+                                        <Icon
+                                            icon="far fa-user"
+                                            title="Total Users in this room."
+                                            style={{
+                                                cursor: "pointer",
+                                                margin: "0 10px"
+                                            }}
+                                        />
+                                        {theRoom[0] && theRoom[0].users
+                                            ? theRoom[0].users
+                                            : "∞"}
+                                    </span>
                                 </div>
                                 <div>
                                     <Clipboard
@@ -347,28 +357,46 @@ const ConversationSettings = ({
     );
 };
 
-const Notification = ({ notificationAvailable, notificationMessage }) => {
+const Notification = ({ messages, nickname, activeRoomID }) => {
+    let latestMessage = [...messages]
+        .filter(message => message.nickname !== nickname)
+        .sort((a, b) => b.date - a.date);
+    let isValidNewMessage =
+        latestMessage &&
+        latestMessage.length > 0 &&
+        latestMessage[0] &&
+        typeof latestMessage[0] === "object";
+
     return (
         <div className="frightbar-notification">
             <div className="frightbar-notification-message-container">
                 <Icon
                     icon="far fa-bell"
-                    color={`${notificationAvailable ? "#F36060" : "#99a8b4"}`}
+                    color={`${isValidNewMessage ? "#F36060" : "#99a8b4"}`}
                 />
                 <span className="notification-message">
-                    {notificationMessage
-                        ? notificationMessage
-                        : "Seems like you are all caught up!"}
+                    {isValidNewMessage ? (
+                        <div>
+                            {
+                                <span>
+                                    {<i>{`"${latestMessage[0].message}"`}</i>}
+                                    {` - by `}
+                                    <b>{latestMessage[0].nickname}</b>
+                                    {` in room `}
+                                    <Link
+                                        to={`/veiled/${
+                                            latestMessage[0].roomid
+                                        }`}
+                                    >
+                                        <u>{latestMessage[0].roomid}</u>
+                                    </Link>
+                                </span>
+                            }
+                        </div>
+                    ) : (
+                        "Seems like you are all caught up!"
+                    )}
                 </span>
-                <div className="notification-controls">
-                    <Icon
-                        icon="far fa-check-circle"
-                        color={`${
-                            notificationAvailable ? "#F36060" : "#99a8b4"
-                        }`}
-                        title="Mark all notifications as read."
-                    />
-                </div>
             </div>
         </div>
     );

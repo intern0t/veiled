@@ -16,6 +16,11 @@ export class ConversationProvider extends Component {
                 rid: "r-f0d6c1a6",
                 note: "Veiled",
                 key: "general"
+            },
+            {
+                rid: "r-c0d6c1a6",
+                note: "Denim",
+                key: "general"
             }
         ],
         message: "", // input default value can't be null so..
@@ -59,6 +64,21 @@ export class ConversationProvider extends Component {
             });
             veil.on("message", data => {
                 this.onMessageReceived(data);
+            });
+            // @TODO: Update total users in the room (planned)
+            veil.on("roomInfo", data => {
+                if (typeof data === "object" && data.roomid && data.users) {
+                    let updatedRooms = [...rooms].map(room => {
+                        if (room.rid === data.roomid) {
+                            room.users = data.users;
+                        }
+                        return room;
+                    });
+                    this.setState(prevState => ({
+                        ...prevState,
+                        rooms: updatedRooms
+                    }));
+                }
             });
             return false;
         });

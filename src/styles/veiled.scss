@@ -175,7 +175,7 @@ body {
 
                 &-notification {
                     width: 100%;
-                    background: rgba($BrightGray, 1);
+                    background: rgba($OuterSpace, 1);
 
                     &-message-container {
                         @include Flex(row);
@@ -198,6 +198,16 @@ body {
                             margin-left: 15px;
                             text-overflow: ellipsis;
                             max-height: $defaultFontSize + 1;
+
+                            i {
+                                font-style: italic;
+                            }
+                            b {
+                                font-weight: bold;
+                            }
+                            a,a:visited{
+                                color: $Shakespeare;
+                            }
                         }
 
                         .notification-controls {
@@ -396,7 +406,7 @@ body {
                     align-content: center;
                     align-items: center;
 
-                    span[class^="fa"]{
+                    span[class^="fa"] {
                         margin-left: 5px;
                         font-size: $defaultFontSize;
                     }
