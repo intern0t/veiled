@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { generateRoomID } from "./Library";
 import { generateNickName } from "./Library";
+import CryptoJS from "crypto-js";
 
 // Implementing Sockets
 import { BACKEND_URL } from "../config";
@@ -116,19 +117,46 @@ export class ConversationProvider extends Component {
      * @memberof ConversationProvider
      */
     addNewMessage = newMessageEntry => {
-        if (
-            !this.state.messages.find(message => {
-                return (
-                    message.date === newMessageEntry.date &&
-                    message.message === newMessageEntry.message
-                );
-            })
-        ) {
-            this.setState(prevState => ({
-                ...prevState,
-                messages: [...prevState.messages, newMessageEntry]
-            }));
+        const { rooms, activeRoomID, messages } = this.state;
+        // Check if the message was emitted or is it our own?
+        if (newMessageEntry && newMessageEntry.emitted) {
+            // If emitted, we know the message is encrypted.
+            let currentRoom = rooms.filter(
+                room => room.rid === activeRoomID
+            )[0];
+            let plainBytes = CryptoJS.AES.decrypt(
+                newMessageEntry.message.toString(),
+                currentRoom.key
+            );
+            let plainMessage = "";
+            try {
+                plainMessage = plainBytes.toString(CryptoJS.enc.Utf8);
+            } catch (ex) {
+                plainMessage =
+                    "Could not decrypt the message, please make sure both ends are using the same encryption and decryption keys.";
+            }
+            if (
+                !messages.find(
+                    message =>
+                        message.date === newMessageEntry.date &&
+                        message.nickname === newMessageEntry.nickname &&
+                        message.message === newMessageEntry.message
+                )
+            ) {
+                newMessageEntry.message =
+                    plainMessage && plainMessage.length > 0
+                        ? plainMessage
+                        : "Could not decrypt the message, please make sure both ends are using the same encryption and decryption keys.";
+                this.setState(prevState => ({
+                    ...prevState,
+                    messages: [...prevState.messages, newMessageEntry]
+                }));
+            }
         }
+    };
+
+    scrollToBottom = node => {
+        node.scrollTop = node.scrollHeight;
     };
 
     onSpeakBarChange = e => {
@@ -149,9 +177,6 @@ export class ConversationProvider extends Component {
                     nickname: nickname ? nickname : "You",
                     roomid: activeRoomID
                 };
-
-                console.log(nickname);
-
                 this.addNewMessage(newMessageEntry);
 
                 this.onSendMessage(newMessageEntry);
@@ -216,6 +241,21 @@ export class ConversationProvider extends Component {
         localStorage.setItem("nickname", this.state.nickname);
     };
 
+    setKey = newKey => {
+        const { activeRoomID, rooms } = this.state;
+        let roomToUpdate = [...rooms].map(room => {
+            if (room.rid === activeRoomID && room.key !== newKey) {
+                room.key = newKey;
+            }
+            return room;
+        });
+
+        this.setState(prevState => ({
+            ...prevState,
+            rooms: roomToUpdate
+        }));
+    };
+
     render() {
         const { children } = this.props;
 
@@ -243,6 +283,7 @@ export class ConversationProvider extends Component {
                     toggleNewConversationModal: this.toggleNewConversationModal,
                     nickname: this.state.nickname,
                     setNickname: this.setNickname,
+                    setKey: this.setKey,
                     leaveRoom: this.onRoomLeave
                 }}
             >

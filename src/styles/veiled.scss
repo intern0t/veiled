@@ -292,6 +292,7 @@ body {
                                     color: rgba($BrightGray, 0.7);
                                     padding: 5px 20px;
                                     line-height: $defaultFontSize * 1.99;
+                                    word-break: break-all;
 
                                     &-from {
                                         background: rgba($Shakespeare, 0.15);
