@@ -66,6 +66,20 @@ export class ConversationProvider extends Component {
                 this.onMessageReceived(data);
             });
             // @TODO: Update total users in the room (planned)
+            veil.on("roomInfo", data => {
+                if (typeof data === "object" && data.roomid && data.users) {
+                    let updatedRooms = [...rooms].map(room => {
+                        if (room.rid === data.roomid) {
+                            room.users = data.users;
+                        }
+                        return room;
+                    });
+                    this.setState(prevState => ({
+                        ...prevState,
+                        rooms: updatedRooms
+                    }));
+                }
+            });
             return false;
         });
     }

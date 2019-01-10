@@ -106,6 +106,7 @@ class Conversation extends Component {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
                     );
+                    // console.log(theRoom[0].users);
                     return (
                         <div className="frightbar">
                             <Notification
@@ -145,7 +146,9 @@ class Conversation extends Component {
                                                 margin: "0 10px"
                                             }}
                                         />
-                                        22
+                                        {theRoom[0] && theRoom[0].users
+                                            ? theRoom[0].users
+                                            : "∞"}
                                     </span>
                                 </div>
                                 <div>
