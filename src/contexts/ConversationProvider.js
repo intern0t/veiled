@@ -12,25 +12,14 @@ const ConversationContext = React.createContext();
 
 export class ConversationProvider extends Component {
     state = {
-        rooms: [
-            {
-                rid: "r-f0d6c1a6",
-                note: "Veiled",
-                key: "general"
-            },
-            {
-                rid: "r-c0d6c1a6",
-                note: "Denim",
-                key: "general"
-            }
-        ],
+        rooms: [],
         message: "", // input default value can't be null so..
         messages: [],
         modals: {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
-        nickname: generateNickName(),
+        nickname: "",
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
@@ -42,47 +31,51 @@ export class ConversationProvider extends Component {
         let roomsFromLocalStorage = localStorage.getItem("rooms");
         let nicknameFromLocalStorage = localStorage.getItem("nickname");
 
-        if (roomsFromLocalStorage) {
-            this.setState(prevState => ({
-                ...prevState,
-                rooms: JSON.parse(roomsFromLocalStorage)
-            }));
-        }
-
-        if (nicknameFromLocalStorage) {
-            this.setState(prevState => ({
-                ...prevState,
-                nickname: nicknameFromLocalStorage
-            }));
-        }
-
-        const { rooms } = this.state;
-
-        rooms.map(room => {
-            veil.emit("join", { roomid: room.rid });
-            veil.on("notification", notice => {
-                this.onNotificationReceived(notice);
-            });
-            veil.on("message", data => {
-                this.onMessageReceived(data);
-            });
-            // @TODO: Update total users in the room (planned)
-            veil.on("roomInfo", data => {
-                if (typeof data === "object" && data.roomid && data.users) {
-                    let updatedRooms = [...rooms].map(room => {
-                        if (room.rid === data.roomid) {
-                            room.users = data.users;
-                        }
-                        return room;
+        if (
+            roomsFromLocalStorage ||
+            (nicknameFromLocalStorage && nicknameFromLocalStorage.length > 0)
+        ) {
+            let storedRooms = JSON.parse(localStorage.getItem("rooms"));
+            this.setState(
+                prevState => ({
+                    ...prevState,
+                    rooms: storedRooms || [],
+                    nickname: nicknameFromLocalStorage || generateNickName()
+                }),
+                () => {
+                    const { rooms } = this.state;
+                    rooms.map(room => {
+                        veil.emit("join", { roomid: room.rid });
+                        veil.on("notification", notice => {
+                            this.onNotificationReceived(notice);
+                        });
+                        veil.on("message", data => {
+                            this.onMessageReceived(data);
+                        });
+                        // @TODO: Update total users in the room (planned)
+                        veil.on("roomInfo", data => {
+                            if (
+                                typeof data === "object" &&
+                                data.roomid &&
+                                data.users
+                            ) {
+                                let updatedRooms = [...rooms].map(room => {
+                                    if (room.rid === data.roomid) {
+                                        room.users = data.users;
+                                    }
+                                    return room;
+                                });
+                                this.setState(prevState => ({
+                                    ...prevState,
+                                    rooms: updatedRooms
+                                }));
+                            }
+                        });
+                        return true;
                     });
-                    this.setState(prevState => ({
-                        ...prevState,
-                        rooms: updatedRooms
-                    }));
                 }
-            });
-            return false;
-        });
+            );
+        }
     }
 
     onNotificationReceived = notice => {
@@ -92,6 +85,7 @@ export class ConversationProvider extends Component {
     };
 
     onMessageReceived = messageEntry => {
+        console.log(messageEntry);
         this.addNewMessage(messageEntry);
     };
 
@@ -107,6 +101,7 @@ export class ConversationProvider extends Component {
     };
 
     onSendMessage = messageEntry => {
+        console.log(messageEntry);
         if (veil.connected) {
             veil.emit("message", messageEntry);
         }
@@ -132,8 +127,7 @@ export class ConversationProvider extends Component {
             try {
                 plainMessage = plainBytes.toString(CryptoJS.enc.Utf8);
             } catch (ex) {
-                plainMessage =
-                    "Could not decrypt the message, please make sure both ends are using the same encryption and decryption keys.";
+                plainMessage = "This message could not be decrypted.";
             }
             if (
                 !messages.find(
@@ -146,47 +140,25 @@ export class ConversationProvider extends Component {
                 newMessageEntry.message =
                     plainMessage && plainMessage.length > 0
                         ? plainMessage
-                        : "Could not decrypt the message, please make sure both ends are using the same encryption and decryption keys.";
-                this.setState(prevState => ({
-                    ...prevState,
-                    messages: [...prevState.messages, newMessageEntry]
-                }));
+                        : "This message could not be decrypted.";
+                this.setState(
+                    prevState => ({
+                        ...prevState,
+                        messages: [...prevState.messages, newMessageEntry]
+                    }),
+                    () => {
+                        localStorage.setItem(
+                            "rooms",
+                            JSON.stringify(this.state.rooms)
+                        );
+                    }
+                );
             }
         }
     };
 
     scrollToBottom = node => {
         node.scrollTop = node.scrollHeight;
-    };
-
-    onSpeakBarChange = e => {
-        let appendedMessage = e.target.value || "";
-        this.setState(prevState => ({
-            ...prevState,
-            message: appendedMessage
-        }));
-    };
-
-    onSpeakBarSpoken = e => {
-        const { activeRoomID, message, nickname } = this.state;
-        if (e.key === "Enter") {
-            if (message && message.length > 0) {
-                let newMessageEntry = {
-                    date: Math.floor(Date.now() / 1000),
-                    message: message,
-                    nickname: nickname ? nickname : "You",
-                    roomid: activeRoomID
-                };
-                this.addNewMessage(newMessageEntry);
-
-                this.onSendMessage(newMessageEntry);
-
-                this.setState(prevState => ({
-                    ...prevState,
-                    message: ""
-                }));
-            }
-        }
     };
 
     toggleConversationSettingsModal = e => {
@@ -214,16 +186,52 @@ export class ConversationProvider extends Component {
     };
 
     changeActiveRoom = roomid => {
-        this.setState(prevState => ({
-            ...prevState,
-            activeRoomID: roomid
-        }));
+        const { rooms } = this.state;
+
+        this.setState(
+            prevState => ({
+                ...prevState,
+                activeRoomID: roomid
+            }),
+            () => {
+                rooms.map(room => {
+                    veil.emit("join", { roomid: room.rid });
+                    veil.on("notification", notice => {
+                        this.onNotificationReceived(notice);
+                    });
+                    veil.on("message", data => {
+                        this.onMessageReceived(data);
+                    });
+                    // @TODO: Update total users in the room (planned)
+                    veil.on("roomInfo", data => {
+                        if (
+                            typeof data === "object" &&
+                            data.roomid &&
+                            data.users
+                        ) {
+                            let updatedRooms = [...rooms].map(room => {
+                                if (room.rid === data.roomid) {
+                                    room.users = data.users;
+                                }
+                                return room;
+                            });
+                            this.setState(prevState => ({
+                                ...prevState,
+                                rooms: updatedRooms
+                            }));
+                        }
+                    });
+                    return veil;
+                });
+            }
+        );
     };
 
     onRoomLeave = roomid => {
         let updatedRooms = this.state.rooms.filter(
             joinedRooms => joinedRooms.rid !== roomid
         );
+        veil.emit("leave", { roomid });
         this.setState(prevState => ({
             ...prevState,
             rooms: updatedRooms
@@ -238,7 +246,7 @@ export class ConversationProvider extends Component {
             }));
         }
 
-        localStorage.setItem("nickname", this.state.nickname);
+        localStorage.setItem("nickname", nickname);
     };
 
     setKey = newKey => {
@@ -254,6 +262,51 @@ export class ConversationProvider extends Component {
             ...prevState,
             rooms: roomToUpdate
         }));
+    };
+
+    addNewRoom = newRoom => {
+        const { generatedRoomID } = this.state;
+        if (
+            newRoom &&
+            typeof newRoom === "object" &&
+            generatedRoomID &&
+            newRoom.note &&
+            newRoom.key
+        ) {
+            let formattedRoom = {
+                rid: generatedRoomID,
+                note: newRoom.note,
+                key: newRoom.key
+            };
+            console.log(formattedRoom);
+
+            this.setState(
+                prevState => ({
+                    ...prevState,
+                    rooms: [...prevState.rooms, formattedRoom],
+                    modals: {
+                        ...prevState.modals,
+                        newConversationModalDisplayed: !prevState.modals
+                            .newConversationModalDisplayed
+                    }
+                }),
+                () => {
+                    localStorage.setItem(
+                        "rooms",
+                        JSON.stringify(
+                            this.state.rooms.map(room => {
+                                delete room.users;
+                                return room;
+                            })
+                        )
+                    );
+
+                    // this.state.rooms.map(room => {
+                    //     return veil.emit("join", { roomid: room.rid });
+                    // });
+                }
+            );
+        }
     };
 
     render() {
@@ -284,7 +337,8 @@ export class ConversationProvider extends Component {
                     nickname: this.state.nickname,
                     setNickname: this.setNickname,
                     setKey: this.setKey,
-                    leaveRoom: this.onRoomLeave
+                    leaveRoom: this.onRoomLeave,
+                    addNewRoom: this.addNewRoom
                 }}
             >
                 {children}

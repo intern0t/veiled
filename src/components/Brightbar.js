@@ -10,7 +10,12 @@ import { ConversationConsumer } from "../contexts/ConversationProvider";
 
 class Brightbar extends Component {
     state = {
-        filterBy: ""
+        filterBy: "",
+        newRoomInfo: {
+            note: "",
+            key: "",
+            keyVisible: false
+        }
     };
 
     onFilterChange = e => {
@@ -32,6 +37,53 @@ class Brightbar extends Component {
                 filterBy: ""
             });
         }
+    };
+
+    onAddNewRoom = e => {
+        e.preventDefault();
+        const { newRoomInfo } = this.state;
+        const { generatedRoomID, addNewRoom } = this.context;
+        console.log(newRoomInfo);
+        if (
+            generatedRoomID &&
+            newRoomInfo.note &&
+            newRoomInfo.key &&
+            newRoomInfo.note.length > 0 &&
+            newRoomInfo.key.length > 0
+        ) {
+            let newRoom = {
+                note: newRoomInfo.note,
+                key: newRoomInfo.key
+            };
+            addNewRoom(newRoom);
+            this.setState(prevState => ({
+                ...prevState,
+                newRoomInfo: { ...prevState.newRoomInfo, note: "", key: "" }
+            }));
+        }
+    };
+
+    onFieldsChange = e => {
+        let changedField = e.target || undefined;
+        if (changedField && changedField.value && changedField.name) {
+            this.setState(prevState => ({
+                ...prevState,
+                newRoomInfo: {
+                    ...prevState.newRoomInfo,
+                    [changedField.name]: changedField.value
+                }
+            }));
+        }
+    };
+
+    keyVisibilityHandle = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            newRoomInfo: {
+                ...prevState.newRoomInfo,
+                keyVisible: !prevState.newRoomInfo.keyVisible
+            }
+        }));
     };
 
     render() {
@@ -96,11 +148,28 @@ class Brightbar extends Component {
                                             }}
                                         >
                                             <AddNewConversation
+                                                roomKey={
+                                                    this.state.newRoomInfo.key
+                                                }
+                                                roomNote={
+                                                    this.state.newRoomInfo.note
+                                                }
                                                 close={
                                                     toggleNewConversationModal
                                                 }
                                                 generate={generateRoomID}
                                                 generated={generatedRoomID}
+                                                onAddNewRoom={this.onAddNewRoom}
+                                                keyIsVisible={
+                                                    this.state.newRoomInfo
+                                                        .keyVisible
+                                                }
+                                                onKeyVisibilityHandle={
+                                                    this.keyVisibilityHandle
+                                                }
+                                                onFieldsChange={
+                                                    this.onFieldsChange
+                                                }
                                             />
                                         </Modal>
                                     </div>
@@ -177,7 +246,17 @@ const ConversationEntry = ({ room, messages, activeRoomID, nickname }) => {
     );
 };
 
-const AddNewConversation = ({ close, generate, generated }) => {
+const AddNewConversation = ({
+    roomKey,
+    roomNote,
+    close,
+    generate,
+    generated,
+    onAddNewRoom,
+    onFieldsChange,
+    keyIsVisible,
+    onKeyVisibilityHandle
+}) => {
     return (
         <div
             className="modal-container"
@@ -198,12 +277,37 @@ const AddNewConversation = ({ close, generate, generated }) => {
             >
                 <div>
                     <div>
-                        <label htmlFor="private-key">Room ID</label>
+                        <label htmlFor="note">Note</label>
                     </div>
                     <div>
                         <input
                             type="text"
-                            name="private-key"
+                            className="text-input"
+                            name="note"
+                            placeholder="To easily identify this room."
+                            onChange={onFieldsChange}
+                            value={roomNote}
+                        />
+                        <Icon
+                            icon="fas fa-undo"
+                            onClick={onKeyVisibilityHandle}
+                            style={{
+                                cursor: "pointer",
+                                margin: "0 10px",
+                                color: "#0092FF"
+                            }}
+                            title={"Clear note field."}
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label htmlFor="roomid">Room ID</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            name="roomid"
                             className="text-input"
                             placeholder="Generated Room ID for your room."
                             value={generated}
@@ -217,32 +321,34 @@ const AddNewConversation = ({ close, generate, generated }) => {
                                 margin: "0 10px",
                                 color: "#0092FF"
                             }}
+                            title="Generate a new room ID."
                         />
                     </div>
                 </div>
                 <div>
                     <div>
-                        <label htmlFor="room-identifier">Note</label>
+                        <label htmlFor="key">Private Key</label>
                     </div>
                     <div>
                         <input
-                            type="text"
+                            type={`${keyIsVisible ? "text" : "password"}`}
                             className="text-input"
-                            name="room-identifier"
-                            placeholder="To better identify this room."
-                        />
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <label htmlFor="private-key">Private Key</label>
-                    </div>
-                    <div>
-                        <input
-                            type="password"
-                            className="text-input"
-                            name="private-key"
+                            name="key"
                             placeholder="Used to encrypt and decrypt messages."
+                            onChange={onFieldsChange}
+                            value={roomKey}
+                        />
+                        <Icon
+                            icon={`fas fa-eye${keyIsVisible ? "-slash" : ""}`}
+                            onClick={onKeyVisibilityHandle}
+                            style={{
+                                cursor: "pointer",
+                                margin: "0 10px",
+                                color: "#0092FF"
+                            }}
+                            title={`Click to ${
+                                keyIsVisible ? "hide" : "reveal"
+                            } your key.`}
                         />
                     </div>
                 </div>
@@ -250,7 +356,13 @@ const AddNewConversation = ({ close, generate, generated }) => {
                     <button className="button" onClick={close}>
                         Close
                     </button>
-                    <button className="button inform">Update</button>
+                    <button
+                        className="button inform"
+                        type="submit"
+                        onClick={onAddNewRoom}
+                    >
+                        Add Room
+                    </button>
                 </div>
             </form>
         </div>
