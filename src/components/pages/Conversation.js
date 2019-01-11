@@ -12,7 +12,8 @@ import aes from "crypto-js/aes";
 class Conversation extends Component {
     state = {
         message: "",
-        conversationSettingsModalDisplayed: false
+        conversationSettingsModalDisplayed: false,
+        keyIsVisible: false
     };
 
     componentDidMount() {
@@ -77,7 +78,7 @@ class Conversation extends Component {
                     room => room.rid === activeRoomID
                 )[0];
                 let cipherText = aes.encrypt(message, currentRoom.key);
-                console.log(cipherText.toString());
+                console.log(cipherText.toString(), currentRoom.key);
 
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
@@ -95,6 +96,13 @@ class Conversation extends Component {
         this.scrollToBottom();
     };
 
+    onKeyVisibilityHandle = e => {
+        this.setState(prevState => ({
+            ...prevState,
+            keyIsVisible: !prevState.keyIsVisible
+        }));
+    };
+
     render() {
         let otherUser = "Anonymous";
         return (
@@ -106,7 +114,8 @@ class Conversation extends Component {
                     nickname,
                     leaveRoom,
                     setNickname,
-                    setKey
+                    setKey,
+                    veil
                 }) => {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
@@ -139,7 +148,7 @@ class Conversation extends Component {
                                         : otherUser}
                                     <Tip
                                         updated={true}
-                                        color="#82D455"
+                                        color={veil.connected ? '#82D455' : '#FF4E00'}
                                         title={"Online"}
                                     />
                                     <span style={{ fontSize: "11px" }}>
@@ -230,6 +239,10 @@ class Conversation extends Component {
                                         currentRoom={theRoom[0]}
                                         setNickname={setNickname}
                                         setKey={setKey}
+                                        keyIsVisible={this.state.keyIsVisible}
+                                        onKeyVisibilityHandle={
+                                            this.onKeyVisibilityHandle
+                                        }
                                     />
                                 </Modal>
                             ) : null}
@@ -273,7 +286,9 @@ const ConversationSettings = ({
     close,
     leaveRoom,
     setNickname,
-    setKey
+    setKey,
+    keyIsVisible,
+    onKeyVisibilityHandle
 }) => {
     return (
         <div className="modal-container">
@@ -337,7 +352,7 @@ const ConversationSettings = ({
                     </div>
                     <div>
                         <input
-                            type="password"
+                            type={`${keyIsVisible ? "text" : "password"}`}
                             className="text-input"
                             name="private-key"
                             placeholder="Used to encrypt and decrypt messages."
@@ -346,6 +361,23 @@ const ConversationSettings = ({
                                     ? setKey(e.target.value)
                                     : null;
                             }}
+                            defaultValue={
+                                currentRoom && currentRoom.key
+                                    ? currentRoom.key
+                                    : ""
+                            }
+                        />
+                        <Icon
+                            icon={`fas fa-eye${keyIsVisible ? "-slash" : ""}`}
+                            onClick={onKeyVisibilityHandle}
+                            style={{
+                                cursor: "pointer",
+                                margin: "0 10px",
+                                color: "#0092FF"
+                            }}
+                            title={`Click to ${
+                                keyIsVisible ? "hide" : "reveal"
+                            } your key.`}
                         />
                     </div>
                 </div>
