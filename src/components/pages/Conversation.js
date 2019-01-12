@@ -25,13 +25,13 @@ class Conversation extends Component {
 
     componentDidMount() {
         const { match } = this.props;
-        const { rooms, changeActiveRoom } = this.context;
+        const { changeActiveRoom } = this.context;
 
         if (match && match.params && match.params.roomid) {
-            let roomExists = [...rooms].find(
+            let lsRooms = JSON.parse(localStorage.getItem("rooms")) || [];
+            let roomExists = [...lsRooms].find(
                 room => room.rid === match.params.roomid
             );
-            console.log(rooms);
 
             if (!roomExists) {
                 // Apparently user hasn't joined the room yet.
@@ -189,16 +189,21 @@ class Conversation extends Component {
             };
             console.log(newRoom);
             addNewRoom(newRoom);
-            this.setState(prevState => ({
-                ...prevState,
-                newRoomInfo: {
-                    ...prevState.newRoomInfo,
-                    note: "",
-                    key: "",
-                    roomid: "",
-                    nickname: ""
+            this.setState(
+                prevState => ({
+                    ...prevState,
+                    newRoomInfo: {
+                        ...prevState.newRoomInfo,
+                        note: "",
+                        key: "",
+                        roomid: "",
+                        nickname: ""
+                    }
+                }),
+                () => {
+                    this.onJoinModalToggle();
                 }
-            }));
+            );
         }
     };
 
@@ -223,6 +228,7 @@ class Conversation extends Component {
                     return (
                         <div className="frightbar">
                             <Notification
+                                rooms={rooms}
                                 messages={messages}
                                 nickname={nickname}
                                 activeRoomID={activeRoomID}
@@ -530,7 +536,7 @@ const ConversationSettings = ({
     );
 };
 
-const Notification = ({ messages, nickname, activeRoomID }) => {
+const Notification = ({ rooms, messages, nickname }) => {
     let latestMessage = [...messages]
         .filter(message => message.nickname !== nickname)
         .sort((a, b) => b.date - a.date);
@@ -539,6 +545,13 @@ const Notification = ({ messages, nickname, activeRoomID }) => {
         latestMessage.length > 0 &&
         latestMessage[0] &&
         typeof latestMessage[0] === "object";
+    let notedRoom = null;
+
+    if (latestMessage[0] && typeof latestMessage[0] === "object") {
+        notedRoom = [...rooms].find(
+            room => room.rid === latestMessage[0].roomid
+        );
+    }
 
     return (
         <div className="frightbar-notification">
@@ -561,7 +574,11 @@ const Notification = ({ messages, nickname, activeRoomID }) => {
                                             latestMessage[0].roomid
                                         }`}
                                     >
-                                        <u>{latestMessage[0].roomid}</u>
+                                        <u>{`${
+                                            notedRoom && notedRoom.note
+                                                ? notedRoom.note
+                                                : "Untitled Room"
+                                        } [${latestMessage[0].roomid}]`}</u>
                                     </Link>
                                 </span>
                             }
