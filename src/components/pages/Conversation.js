@@ -12,16 +12,42 @@ import aes from "crypto-js/aes";
 class Conversation extends Component {
     state = {
         message: "",
+        keyIsVisible: false,
+        joinRoomPromptVisible: false,
         conversationSettingsModalDisplayed: false,
-        keyIsVisible: false
+        newRoomInfo: {
+            roomid: "",
+            nickname: "",
+            note: "",
+            key: ""
+        }
     };
 
     componentDidMount() {
         const { match } = this.props;
-        const { changeActiveRoom } = this.context;
+        const { rooms, changeActiveRoom } = this.context;
 
         if (match && match.params && match.params.roomid) {
-            changeActiveRoom(match.params.roomid || "r-general");
+            let roomExists = [...rooms].find(
+                room => room.rid === match.params.roomid
+            );
+            console.log(rooms);
+
+            if (!roomExists) {
+                // Apparently user hasn't joined the room yet.
+                // Ask if the room should be added to the rooms' list.
+                this.setState(prevState => ({
+                    ...prevState,
+                    joinRoomPromptVisible: !prevState.joinRoomPromptVisible,
+                    newRoomInfo: {
+                        ...prevState.newRoomInfo,
+                        roomid: match.params.roomid
+                    }
+                }));
+            } else {
+                // Room exists, simply change the room!
+                changeActiveRoom(match.params.roomid || "r-general");
+            }
         }
 
         console.log(
@@ -78,7 +104,6 @@ class Conversation extends Component {
                     room => room.rid === activeRoomID
                 )[0];
                 let cipherText = aes.encrypt(message, currentRoom.key);
-                console.log(cipherText.toString(), currentRoom.key);
 
                 let newMessageEntry = {
                     date: Math.floor(Date.now() / 1000),
@@ -103,6 +128,80 @@ class Conversation extends Component {
         }));
     };
 
+    onJoinNicknameChange = e => {
+        let nick = e.target.value || "";
+        this.setState(prevState => ({
+            ...prevState,
+            newRoomInfo: {
+                ...prevState.newRoomInfo,
+                nickname: nick
+            }
+        }));
+    };
+
+    onJoinNoteChange = e => {
+        let note = e.target.value || "";
+        this.setState(prevState => ({
+            ...prevState,
+            newRoomInfo: {
+                ...prevState.newRoomInfo,
+                note
+            }
+        }));
+    };
+
+    onJoinKeyChange = e => {
+        let newKey = e.target.value || "";
+        this.setState(prevState => ({
+            ...prevState,
+            newRoomInfo: {
+                ...prevState.newRoomInfo,
+                key: newKey
+            }
+        }));
+    };
+
+    onJoinModalToggle = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            joinRoomPromptVisible: !prevState.joinRoomPromptVisible
+        }));
+    };
+
+    onJoinModalSubmit = e => {
+        e.preventDefault();
+
+        const { newRoomInfo } = this.state;
+        const { addNewRoom } = this.context;
+
+        console.log(newRoomInfo);
+        if (
+            newRoomInfo.note &&
+            newRoomInfo.key &&
+            newRoomInfo.roomid &&
+            newRoomInfo.note.length > 0 &&
+            newRoomInfo.key.length > 0
+        ) {
+            let newRoom = {
+                note: newRoomInfo.note,
+                key: newRoomInfo.key,
+                rid: newRoomInfo.roomid
+            };
+            console.log(newRoom);
+            addNewRoom(newRoom);
+            this.setState(prevState => ({
+                ...prevState,
+                newRoomInfo: {
+                    ...prevState.newRoomInfo,
+                    note: "",
+                    key: "",
+                    roomid: "",
+                    nickname: ""
+                }
+            }));
+        }
+    };
+
     render() {
         let otherUser = "Anonymous";
         return (
@@ -120,7 +219,7 @@ class Conversation extends Component {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
                     );
-                    // console.log(theRoom[0].users);
+
                     return (
                         <div className="frightbar">
                             <Notification
@@ -148,7 +247,11 @@ class Conversation extends Component {
                                         : otherUser}
                                     <Tip
                                         updated={true}
-                                        color={veil.connected ? '#82D455' : '#FF4E00'}
+                                        color={
+                                            veil.connected
+                                                ? "#82D455"
+                                                : "#FF4E00"
+                                        }
                                         title={"Online"}
                                     />
                                     <span style={{ fontSize: "11px" }}>
@@ -243,6 +346,32 @@ class Conversation extends Component {
                                         onKeyVisibilityHandle={
                                             this.onKeyVisibilityHandle
                                         }
+                                    />
+                                </Modal>
+                            ) : null}
+
+                            {this.state.joinRoomPromptVisible ? (
+                                <Modal>
+                                    <PromptJoin
+                                        close={this.onJoinModalToggle}
+                                        currentKey={this.state.newRoomInfo.key}
+                                        currentNote={
+                                            this.state.newRoomInfo.note
+                                        }
+                                        nickname={nickname}
+                                        onJoinKeyChange={this.onJoinKeyChange}
+                                        onJoinNicknameChange={
+                                            this.onJoinNicknameChange
+                                        }
+                                        onJoinNoteChange={this.onJoinNoteChange}
+                                        keyIsVisible={this.state.keyIsVisible}
+                                        onKeyVisibilityHandle={
+                                            this.onKeyVisibilityHandle
+                                        }
+                                        newRoomID={
+                                            this.state.newRoomInfo.roomid
+                                        }
+                                        joinRoomEvent={this.onJoinModalSubmit}
                                     />
                                 </Modal>
                             ) : null}
@@ -442,6 +571,111 @@ const Notification = ({ messages, nickname, activeRoomID }) => {
                     )}
                 </span>
             </div>
+        </div>
+    );
+};
+
+const PromptJoin = ({
+    close,
+    newRoomID,
+    nickname,
+    currentKey,
+    currentNote,
+    onJoinKeyChange,
+    onJoinNoteChange,
+    keyIsVisible,
+    onKeyVisibilityHandle,
+    joinRoomEvent
+}) => {
+    return (
+        <div className="modal-container">
+            <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                <Icon
+                    icon="far fa-check-circle"
+                    style={{ color: "#55A7D4", fontSize: "50px" }}
+                />
+            </div>
+            <div style={{ textAlign: "center" }}>
+                <h1
+                    style={{
+                        fontSize: "15px",
+                        fontWeight: "bold",
+                        marginBottom: "10px"
+                    }}
+                >
+                    {newRoomID || "Unknown Room"}
+                </h1>
+                <div>
+                    This chat room is not in your rooms list yet, would you like
+                    to add this room to your rooms list?
+                </div>
+            </div>
+            <form onSubmit={joinRoomEvent}>
+                <div>
+                    <div>
+                        <label htmlFor="display-name">Display Name</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            name="display-name"
+                            className="text-input"
+                            placeholder="Display name for this conversation."
+                            defaultValue={nickname}
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label htmlFor="change-note">Note</label>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            name="change-note"
+                            className="text-input"
+                            placeholder="Edit/Enter note to identify this conversation/room."
+                            onChange={onJoinNoteChange}
+                            defaultValue={currentNote}
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label htmlFor="private-key">Private Key</label>
+                    </div>
+                    <div>
+                        <input
+                            type={`${keyIsVisible ? "text" : "password"}`}
+                            className="text-input"
+                            name="private-key"
+                            placeholder="Used to encrypt and decrypt messages."
+                            onChange={onJoinKeyChange}
+                            defaultValue={currentKey}
+                        />
+                        <Icon
+                            icon={`fas fa-eye${keyIsVisible ? "-slash" : ""}`}
+                            onClick={onKeyVisibilityHandle}
+                            style={{
+                                cursor: "pointer",
+                                margin: "0 10px",
+                                color: "#0092FF"
+                            }}
+                            title={`Click to ${
+                                keyIsVisible ? "hide" : "reveal"
+                            } your key.`}
+                        />
+                    </div>
+                </div>
+                <div className="buttons-wrapper">
+                    <button type="button" className="button" onClick={close}>
+                        Cancel
+                    </button>
+                    <button type="submit" className="button inform">
+                        Join
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };

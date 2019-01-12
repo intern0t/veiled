@@ -186,7 +186,7 @@
 
             .buttons-wrapper {
                 @include Flex(row);
-                justify-content: flex-end;
+                justify-content: center;
                 align-content: center;
                 align-items: center;
                 margin-top: 10px;
