@@ -4,14 +4,13 @@ import Brightbar from "../components/Brightbar";
 import MainPage from "../components/pages/MainPage";
 import Conversation from "../components/pages/Conversation";
 import Settings from "../components/pages/Settings";
-import Bugs from "../components/pages/Bugs";
-import Archive from "../components/pages/Archive";
 import { AppProvider } from "../contexts/AppProvider";
 import { ConversationProvider } from "../contexts/ConversationProvider";
 import { Switch, Route } from "react-router-dom";
 import Footer from "../components/Footer";
 import PageWrapper from "../components/pages/PageWrapper";
 import SocketWrapper from "../containers/SocketWrapper";
+import Contact from "../components/pages/Contact";
 
 const ApplicationRouter = () => {
     return (
@@ -31,24 +30,6 @@ const ApplicationRouter = () => {
                                 />
                                 <Route
                                     exact
-                                    path="/conversation"
-                                    component={props => (
-                                        <PageWrapper {...props}>
-                                            <MainPage />
-                                        </PageWrapper>
-                                    )}
-                                />
-                                <Route
-                                    exact
-                                    path="/archive"
-                                    component={props => (
-                                        <PageWrapper {...props}>
-                                            <Archive {...props} />
-                                        </PageWrapper>
-                                    )}
-                                />
-                                <Route
-                                    exact
                                     path="/settings"
                                     component={props => (
                                         <PageWrapper {...props}>
@@ -58,10 +39,10 @@ const ApplicationRouter = () => {
                                 />
                                 <Route
                                     exact
-                                    path="/bugs"
+                                    path="/contact"
                                     component={props => (
                                         <PageWrapper {...props}>
-                                            <Bugs {...props} />
+                                            <Contact {...props} />
                                         </PageWrapper>
                                     )}
                                 />
