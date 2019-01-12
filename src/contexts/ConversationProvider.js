@@ -19,7 +19,7 @@ export class ConversationProvider extends Component {
             conversationSettingsModalDisplayed: false,
             newConversationModalDisplayed: false
         },
-        nickname: "",
+        nickname: generateNickName(),
         generatedRoomID: generateRoomID(),
         activeRoomID: null
     };
@@ -85,7 +85,6 @@ export class ConversationProvider extends Component {
     };
 
     onMessageReceived = messageEntry => {
-        console.log(messageEntry);
         this.addNewMessage(messageEntry);
     };
 
@@ -101,7 +100,6 @@ export class ConversationProvider extends Component {
     };
 
     onSendMessage = messageEntry => {
-        console.log(messageEntry);
         if (veil.connected) {
             veil.emit("message", messageEntry);
         }
@@ -274,11 +272,11 @@ export class ConversationProvider extends Component {
             newRoom.key
         ) {
             let formattedRoom = {
-                rid: generatedRoomID,
                 note: newRoom.note,
                 key: newRoom.key
             };
-            console.log(formattedRoom);
+
+            formattedRoom.rid = newRoom.rid ? newRoom.rid : generatedRoomID;
 
             this.setState(
                 prevState => ({

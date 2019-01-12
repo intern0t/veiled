@@ -15,7 +15,8 @@ class Brightbar extends Component {
             note: "",
             key: "",
             keyVisible: false
-        }
+        },
+        newConversationModalDisplayed: false
     };
 
     onFilterChange = e => {
@@ -86,6 +87,13 @@ class Brightbar extends Component {
         }));
     };
 
+    toggleNewConversationModal = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            newConversationModalDisplayed: !prevState.newConversationModalDisplayed
+        }));
+    };
+
     render() {
         return (
             <AppConsumer>
@@ -96,8 +104,6 @@ class Brightbar extends Component {
                                 rooms,
                                 messages,
                                 nickname,
-                                toggleNewConversationModal,
-                                newConversationModalDisplayed,
                                 generatedRoomID,
                                 generateRoomID,
                                 activeRoomID
@@ -114,7 +120,10 @@ class Brightbar extends Component {
                                         }}
                                     >
                                         <ConversationSearch
-                                            toggle={toggleNewConversationModal}
+                                            toggle={
+                                                this.state
+                                                    .toggleNewConversationModal
+                                            }
                                             onChange={this.onFilterChange}
                                             clearFilter={this.clearFilter}
                                             filterBy={this.state.filterBy}
@@ -142,7 +151,8 @@ class Brightbar extends Component {
                                         </ul>
                                         <Modal
                                             style={{
-                                                display: newConversationModalDisplayed
+                                                display: this.state
+                                                    .newConversationModalDisplayed
                                                     ? "flex"
                                                     : "none"
                                             }}
@@ -155,7 +165,8 @@ class Brightbar extends Component {
                                                     this.state.newRoomInfo.note
                                                 }
                                                 close={
-                                                    toggleNewConversationModal
+                                                    this.state
+                                                        .toggleNewConversationModal
                                                 }
                                                 generate={generateRoomID}
                                                 generated={generatedRoomID}
