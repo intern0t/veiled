@@ -49,6 +49,11 @@ class Conversation extends Component {
                 // Room exists, simply change the room!
                 changeActiveRoom(match.params.roomid || "r-general");
             }
+
+            let documentTitle = document.title;
+            if (documentTitle && documentTitle.includes(match.params.roomid)) {
+                document.title = "Veiled";
+            }
         }
 
         console.log(
@@ -197,10 +202,6 @@ class Conversation extends Component {
         }
     };
 
-    changed = () => {
-        console.log("Something changed!");
-    };
-
     render() {
         let otherUser = "Anonymous";
         return (
@@ -311,7 +312,6 @@ class Conversation extends Component {
                                     darkMode ? "darkmode" : ""
                                 }`}
                                 id="conversation-window"
-                                onChange={this.changed}
                             >
                                 {messages
                                     .filter(
@@ -332,7 +332,9 @@ class Conversation extends Component {
                                                 timestamp={messageEntry.date}
                                                 message={messageEntry.message}
                                                 darkMode={darkMode}
-                                                attachRef={attachRefToNewMessage}
+                                                attachRef={
+                                                    attachRefToNewMessage
+                                                }
                                             />
                                         );
                                     })}
