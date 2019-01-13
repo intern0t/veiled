@@ -11,19 +11,23 @@ const veil = io.connect(BACKEND_URL + "/veil");
 const ConversationContext = React.createContext();
 
 export class ConversationProvider extends Component {
-    state = {
-        rooms: [],
-        message: "", // input default value can't be null so..
-        messages: [],
-        modals: {
-            conversationSettingsModalDisplayed: false,
-            newConversationModalDisplayed: false
-        },
-        nickname: generateNickName(),
-        generatedRoomID: generateRoomID(),
-        activeRoomID: null,
-        darkMode: false
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            rooms: [],
+            message: "", // input default value can't be null so..
+            messages: [],
+            modals: {
+                conversationSettingsModalDisplayed: false,
+                newConversationModalDisplayed: false
+            },
+            nickname: generateNickName(),
+            generatedRoomID: generateRoomID(),
+            activeRoomID: null,
+            darkMode: false
+        };
+        this.scrollToRef = this.scrollToMyRef.bind(this);
+    }
 
     /**
      * TODO: Fetch & load all saved rooms from localStorage, if exists.
@@ -90,6 +94,29 @@ export class ConversationProvider extends Component {
 
     onMessageReceived = messageEntry => {
         this.addNewMessage(messageEntry);
+        this.scrollToMyRef();
+    };
+
+    /**
+     * * Auto scroll to view.
+     * @memberof ConversationProvider
+     */
+    scrollToMyRef = () => {
+        if (this.scrollToRef) {
+            this.scrollToRef.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+                inline: "end"
+            });
+        }
+    };
+
+    /**
+     * * Receives and updates our message component refs.
+     * @memberof ConversationProvider
+     */
+    attachRefToNewMessage = msgElementRef => {
+        this.scrollToRef = msgElementRef;
     };
 
     /**
@@ -157,6 +184,7 @@ export class ConversationProvider extends Component {
                 );
             }
         }
+        this.scrollToMyRef();
     };
 
     scrollToBottom = node => {
@@ -351,7 +379,8 @@ export class ConversationProvider extends Component {
                     leaveRoom: this.onRoomLeave,
                     addNewRoom: this.addNewRoom,
                     darkMode: this.state.darkMode,
-                    toggleModes: this.toggleModes
+                    toggleModes: this.toggleModes,
+                    attachRefToNewMessage: this.attachRefToNewMessage
                 }}
             >
                 {children}

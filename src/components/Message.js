@@ -3,11 +3,11 @@ import moment from "moment";
 import UserAvatar from "./UserAvatar";
 import Linkify from "linkifyjs/react";
 
-const Message = ({ me, timestamp, message, from, darkMode }) => {
+const Message = ({ me, timestamp, message, from, darkMode, attachRef }) => {
     const yourMessages = me === from;
 
     return (
-        <div className="message-entry">
+        <div className="message-entry" ref={ref => attachRef(ref)}>
             <div
                 style={{ flexDirection: yourMessages ? "row-reverse" : "row" }}
             >
@@ -24,8 +24,10 @@ const Message = ({ me, timestamp, message, from, darkMode }) => {
                         }`}
                         style={{
                             background: yourMessages
-                            ? darkMode ? "rgba(153, 168, 180, 0.3)" : "rgba(54, 62, 71, 0.08)"
-                            : "rgba(85, 167, 212, 0.3)",
+                                ? darkMode
+                                    ? "rgba(153, 168, 180, 0.3)"
+                                    : "rgba(54, 62, 71, 0.08)"
+                                : "rgba(85, 167, 212, 0.3)",
                             color: darkMode ? "white" : "rgba(54, 62, 71, 0.7)"
                         }}
                     >
