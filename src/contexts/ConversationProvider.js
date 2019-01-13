@@ -187,10 +187,6 @@ export class ConversationProvider extends Component {
         this.scrollToMyRef();
     };
 
-    scrollToBottom = node => {
-        node.scrollTop = node.scrollHeight;
-    };
-
     toggleConversationSettingsModal = e => {
         e.preventDefault();
         this.setState(prevState => ({

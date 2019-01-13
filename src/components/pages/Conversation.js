@@ -70,15 +70,7 @@ class Conversation extends Component {
         ) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
-        // this.scrollToBottom();
     }
-
-    scrollToBottom = () => {
-        const conversationWindow = document.getElementById(
-            "conversation-window"
-        );
-        conversationWindow.scrollTop = conversationWindow.scrollHeight;
-    };
 
     toggleConversationSettingsModal = () => {
         this.setState(prevState => ({
@@ -119,7 +111,6 @@ class Conversation extends Component {
                 }));
             }
         }
-        // this.scrollToBottom();
     };
 
     onKeyVisibilityHandle = e => {
