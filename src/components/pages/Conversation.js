@@ -8,6 +8,7 @@ import Clipboard from "react-clipboard.js";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 import { Link } from "react-router-dom";
 import aes from "crypto-js/aes";
+import Linkify from 'linkifyjs/react'
 
 class Conversation extends Component {
     state = {
@@ -565,7 +566,22 @@ const Notification = ({ rooms, messages, nickname }) => {
                         <div>
                             {
                                 <span>
-                                    {<i>{`"${latestMessage[0].message}"`}</i>}
+                                    <Linkify
+                                        options={{
+                                            attributes: {
+                                                className: 'linkified',
+                                                target: {
+                                                    url: "_blank"
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        {
+                                            <i>{`"${
+                                                latestMessage[0].message
+                                            }"`}</i>
+                                        }
+                                    </Linkify>
                                     {` - by `}
                                     <b>{latestMessage[0].nickname}</b>
                                     {` in room `}

@@ -127,8 +127,9 @@
         max-width: 400px;
         min-height: auto;
         background: $TwilightBlue;
-        @include BorderRadius(3px, all);
         padding: 30px;
+        @include BorderRadius(3px, all);
+        @include Box-Shadow(2px 1px 5px 0px rgba($Black, 0.75));
 
         div {
             span {
@@ -196,5 +197,13 @@
                 }
             }
         }
+    }
+}
+
+.linkified {
+    color: $Shakespeare;
+
+    &:visited{
+        color: $BrightGray;
     }
 }

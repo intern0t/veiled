@@ -13,21 +13,6 @@ class Sidebar extends Component {
                         <ul className="sidebar-section">
                             <li>
                                 <Link
-                                    to="/conversation"
-                                    title="Conversation"
-                                    className={
-                                        (currentPage && currentPage === "/") ||
-                                        currentPage === "/conversation" ||
-                                        currentPage.includes("/veiled/")
-                                            ? "sidebar-section-active"
-                                            : ""
-                                    }
-                                >
-                                    <Icon icon="fas fa-home" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to="#"
                                     title="Conversations"
                                     onClick={e => toggleMailTab(e)}
@@ -39,7 +24,7 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Tip updated={true} color={"#FF4E00"} />
-                                    <Icon icon="fas fa-comments" />
+                                    <Icon icon="far fa-comments" />
                                 </Link>
                             </li>
                             <li>
@@ -53,7 +38,7 @@ class Sidebar extends Component {
                                             : ""
                                     }
                                 >
-                                    <Icon icon="fas fa-cogs" />
+                                    <Icon icon="far fa-save" />
                                 </Link>
                             </li>
                             <li>
@@ -68,7 +53,7 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Icon
-                                        icon={`fas fa-envelope${
+                                        icon={`far fa-envelope${
                                             currentPage &&
                                             currentPage === "/contact"
                                                 ? "-open"
@@ -79,29 +64,12 @@ class Sidebar extends Component {
                             </li>
                             <li>
                                 <Link
-                                    to="/bugs"
-                                    title="Report bugs"
-                                    className={
-                                        currentPage && currentPage === "/bugs"
-                                            ? "sidebar-section-active"
-                                            : ""
-                                    }
+                                    to="#"
+                                    title="Toggle modes"
                                 >
-                                    <Icon icon="fas fa-bug" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/contribute"
-                                    title="Contribute"
-                                    className={
-                                        currentPage &&
-                                        currentPage === "/contribute"
-                                            ? "sidebar-section-active"
-                                            : ""
-                                    }
-                                >
-                                    <Icon icon={`fas fa-code-branch`} />
+                                    <Icon
+                                        icon={`far fa-lightbulb`}
+                                    />
                                 </Link>
                             </li>
                         </ul>

@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
 import UserAvatar from "./UserAvatar";
+import Linkify from "linkifyjs/react";
 
 const Message = ({ me, timestamp, message, from }) => {
     const yourMessages = me === from;
@@ -22,7 +23,17 @@ const Message = ({ me, timestamp, message, from }) => {
                             yourMessages ? "message-you" : "message-from"
                         }`}
                     >
-                        {message}
+                        <Linkify
+                            options={{
+                                attributes: {
+                                    target: {
+                                        url: "_blank"
+                                    }
+                                }
+                            }}
+                        >
+                            {message}
+                        </Linkify>
                     </span>
                     <span
                         className="timestamp"

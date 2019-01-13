@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "crypto-js": "^3.1.9-1",
+    "linkifyjs": "^2.1.7",
     "moment": "^2.23.0",
     "react": "^16.7.0",
     "react-clipboard.js": "^2.0.2",
