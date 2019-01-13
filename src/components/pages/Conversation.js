@@ -70,7 +70,7 @@ class Conversation extends Component {
         ) {
             changeActiveRoom(match.params.roomid || "r-general");
         }
-        this.scrollToBottom();
+        // this.scrollToBottom();
     }
 
     scrollToBottom = () => {
@@ -119,7 +119,7 @@ class Conversation extends Component {
                 }));
             }
         }
-        this.scrollToBottom();
+        // this.scrollToBottom();
     };
 
     onKeyVisibilityHandle = e => {
@@ -171,11 +171,9 @@ class Conversation extends Component {
 
     onJoinModalSubmit = e => {
         e.preventDefault();
-
         const { newRoomInfo } = this.state;
         const { addNewRoom } = this.context;
 
-        console.log(newRoomInfo);
         if (
             newRoomInfo.note &&
             newRoomInfo.key &&
@@ -208,6 +206,10 @@ class Conversation extends Component {
         }
     };
 
+    changed = () => {
+        console.log("Something changed!");
+    };
+
     render() {
         let otherUser = "Anonymous";
         return (
@@ -221,7 +223,8 @@ class Conversation extends Component {
                     setNickname,
                     setKey,
                     veil,
-                    darkMode
+                    darkMode,
+                    attachRefToNewMessage
                 }) => {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
@@ -317,6 +320,7 @@ class Conversation extends Component {
                                     darkMode ? "darkmode" : ""
                                 }`}
                                 id="conversation-window"
+                                onChange={this.changed}
                             >
                                 {messages
                                     .filter(
@@ -337,6 +341,7 @@ class Conversation extends Component {
                                                 timestamp={messageEntry.date}
                                                 message={messageEntry.message}
                                                 darkMode={darkMode}
+                                                attachRef={attachRefToNewMessage}
                                             />
                                         );
                                     })}
@@ -408,19 +413,8 @@ const SpeakBar = ({ _onChange, _onSpeak, message, darkMode }) => {
                 type="text"
                 placeholder="Type your message here .."
                 value={message}
+                autoFocus
             />
-            <ul>
-                <li>
-                    <a href="/">
-                        <Icon icon="fas fa-paperclip" />
-                    </a>
-                </li>
-                <li>
-                    <a href="/">
-                        <Icon icon="fas fa-file-image" />
-                    </a>
-                </li>
-            </ul>
         </div>
     );
 };
