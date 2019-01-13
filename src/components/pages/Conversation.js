@@ -8,7 +8,7 @@ import Clipboard from "react-clipboard.js";
 import { ConversationConsumer } from "../../contexts/ConversationProvider";
 import { Link } from "react-router-dom";
 import aes from "crypto-js/aes";
-import Linkify from 'linkifyjs/react'
+import Linkify from "linkifyjs/react";
 
 class Conversation extends Component {
     state = {
@@ -220,7 +220,8 @@ class Conversation extends Component {
                     leaveRoom,
                     setNickname,
                     setKey,
-                    veil
+                    veil,
+                    darkMode
                 }) => {
                     let theRoom = rooms.filter(
                         room => room.rid === activeRoomID
@@ -234,7 +235,11 @@ class Conversation extends Component {
                                 nickname={nickname}
                                 activeRoomID={activeRoomID}
                             />
-                            <div className="frightbar-top">
+                            <div
+                                className={`frightbar-top ${
+                                    darkMode ? "darkmode" : ""
+                                }`}
+                            >
                                 <div>
                                     <Icon
                                         icon="fas fa-landmark"
@@ -308,7 +313,9 @@ class Conversation extends Component {
                                 </div>
                             </div>
                             <div
-                                className="frightbar-inner"
+                                className={`frightbar-inner ${
+                                    darkMode ? "darkmode" : ""
+                                }`}
                                 id="conversation-window"
                             >
                                 {messages
@@ -337,6 +344,7 @@ class Conversation extends Component {
                                 _onChange={this.onSpeakBarChange}
                                 _onSpeak={this.onSpeakBarSpoken}
                                 message={this.state.message}
+                                darkMode={darkMode}
                             />
 
                             {this.state.conversationSettingsModalDisplayed ? (
@@ -390,9 +398,9 @@ class Conversation extends Component {
     }
 }
 
-const SpeakBar = ({ _onChange, _onSpeak, message }) => {
+const SpeakBar = ({ _onChange, _onSpeak, message, darkMode }) => {
     return (
-        <div className="speakbar">
+        <div className={`speakbar ${darkMode ? "darkmode" : ""}`}>
             <input
                 onChange={_onChange}
                 onKeyDown={_onSpeak}
@@ -569,7 +577,7 @@ const Notification = ({ rooms, messages, nickname }) => {
                                     <Linkify
                                         options={{
                                             attributes: {
-                                                className: 'linkified',
+                                                className: "linkified",
                                                 target: {
                                                     url: "_blank"
                                                 }
