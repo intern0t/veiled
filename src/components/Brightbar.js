@@ -123,8 +123,7 @@ class Brightbar extends Component {
                                     >
                                         <ConversationSearch
                                             toggle={
-                                                this.state
-                                                    .toggleNewConversationModal
+                                                this.toggleNewConversationModal
                                             }
                                             onChange={this.onFilterChange}
                                             clearFilter={this.clearFilter}
@@ -167,7 +166,7 @@ class Brightbar extends Component {
                                                     this.state.newRoomInfo.note
                                                 }
                                                 close={
-                                                    this.state
+                                                    this
                                                         .toggleNewConversationModal
                                                 }
                                                 generate={generateRoomID}
