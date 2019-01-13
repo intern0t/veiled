@@ -336,6 +336,7 @@ class Conversation extends Component {
                                                 }
                                                 timestamp={messageEntry.date}
                                                 message={messageEntry.message}
+                                                darkMode={darkMode}
                                             />
                                         );
                                     })}
