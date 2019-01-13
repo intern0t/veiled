@@ -93,6 +93,7 @@ export class ConversationProvider extends Component {
     };
 
     onMessageReceived = messageEntry => {
+        this.setBrowserTitle(messageEntry.roomid);
         this.addNewMessage(messageEntry);
         this.scrollToMyRef();
     };
@@ -102,7 +103,10 @@ export class ConversationProvider extends Component {
      * @memberof ConversationProvider
      */
     scrollToMyRef = () => {
-        if (this.scrollToRef) {
+        if (
+            this.scrollToRef &&
+            typeof this.scrollToRef.scrollIntoView === "function"
+        ) {
             this.scrollToRef.scrollIntoView({
                 behavior: "smooth",
                 block: "end",
@@ -342,6 +346,17 @@ export class ConversationProvider extends Component {
                 localStorage.setItem("darkmode", this.state.darkMode);
             }
         );
+    };
+
+    setBrowserTitle = messageOnRoom => {
+        if (
+            messageOnRoom.includes("r-") &&
+            messageOnRoom !== this.state.activeRoomID
+        ) {
+            document.title = `Veiled${
+                messageOnRoom ? ` - New message on ${messageOnRoom}.` : ""
+            }`;
+        }
     };
 
     render() {
