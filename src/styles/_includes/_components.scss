@@ -24,6 +24,15 @@
     }
 }
 
+.darkmode{
+    background: $OuterSpace;
+    color: $GullGray !important;
+
+    span[class^="fa"]{
+        color: $GullGray;
+    }
+}
+
 .user-avatar {
     $userAvatarDimensions: 35px;
     min-width: $userAvatarDimensions;

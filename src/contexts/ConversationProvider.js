@@ -21,7 +21,8 @@ export class ConversationProvider extends Component {
         },
         nickname: generateNickName(),
         generatedRoomID: generateRoomID(),
-        activeRoomID: null
+        activeRoomID: null,
+        darkMode: false
     };
 
     /**
@@ -30,17 +31,20 @@ export class ConversationProvider extends Component {
     componentDidMount() {
         let roomsFromLocalStorage = localStorage.getItem("rooms");
         let nicknameFromLocalStorage = localStorage.getItem("nickname");
+        let modeFromLocalStorage = localStorage.getItem("darkmode");
 
         if (
             roomsFromLocalStorage ||
-            (nicknameFromLocalStorage && nicknameFromLocalStorage.length > 0)
+            (nicknameFromLocalStorage && nicknameFromLocalStorage.length > 0) ||
+            modeFromLocalStorage
         ) {
             let storedRooms = JSON.parse(localStorage.getItem("rooms"));
             this.setState(
                 prevState => ({
                     ...prevState,
                     rooms: storedRooms || [],
-                    nickname: nicknameFromLocalStorage || generateNickName()
+                    nickname: nicknameFromLocalStorage || generateNickName(),
+                    darkMode: JSON.parse(modeFromLocalStorage) || false
                 }),
                 () => {
                     const { rooms } = this.state;
@@ -298,13 +302,22 @@ export class ConversationProvider extends Component {
                             })
                         )
                     );
-
-                    // this.state.rooms.map(room => {
-                    //     return veil.emit("join", { roomid: room.rid });
-                    // });
                 }
             );
         }
+    };
+
+    toggleModes = e => {
+        e.preventDefault();
+        this.setState(
+            prevState => ({
+                ...prevState,
+                darkMode: !prevState.darkMode
+            }),
+            () => {
+                localStorage.setItem("darkmode", this.state.darkMode);
+            }
+        );
     };
 
     render() {
@@ -336,7 +349,9 @@ export class ConversationProvider extends Component {
                     setNickname: this.setNickname,
                     setKey: this.setKey,
                     leaveRoom: this.onRoomLeave,
-                    addNewRoom: this.addNewRoom
+                    addNewRoom: this.addNewRoom,
+                    darkMode: this.state.darkMode,
+                    toggleModes: this.toggleModes
                 }}
             >
                 {children}
