@@ -116,7 +116,9 @@ class Brightbar extends Component {
                                                 mailTabDisplayed &&
                                                 mailTabDisplayed === true
                                                     ? "block"
-                                                    : "none"
+                                                    : "none",
+                                            boxShadow:
+                                                "box-shadow: 2px 0px 5px 0px rgba(0,0,0,0.75)"
                                         }}
                                     >
                                         <ConversationSearch
@@ -206,9 +208,10 @@ const ConversationSearch = ({ toggle, onChange, clearFilter, filterBy }) => {
                 onKeyDown={e => clearFilter(e)}
             />
             <Icon
-                icon={"fas fa-plus-square"}
+                icon={"far fa-plus-square"}
                 color={"#99a8b4"}
                 title={"Add or join a secure room."}
+                style={{ cursor: "pointer", marginLeft: "10px" }}
                 onClick={toggle}
             />
         </div>
@@ -236,6 +239,11 @@ const ConversationEntry = ({ room, messages, activeRoomID, nickname }) => {
                         ? "brightbar-conversations-entry active-conversation-entry"
                         : "brightbar-conversations-entry"
                 }
+                style={{
+                    boxShadow: currentlyActive
+                        ? "#303841 0px 0px 5px 1px inset"
+                        : ""
+                }}
             >
                 <div className="brightbar-conversations-entry-wrapper">
                     <Icon

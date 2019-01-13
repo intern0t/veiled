@@ -24,7 +24,7 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Tip updated={true} color={"#FF4E00"} />
-                                    <Icon icon="fas fa-comments" />
+                                    <Icon icon="far fa-comments" />
                                 </Link>
                             </li>
                             <li>
@@ -38,7 +38,7 @@ class Sidebar extends Component {
                                             : ""
                                     }
                                 >
-                                    <Icon icon="fas fa-cogs" />
+                                    <Icon icon="far fa-save" />
                                 </Link>
                             </li>
                             <li>
@@ -53,12 +53,22 @@ class Sidebar extends Component {
                                     }
                                 >
                                     <Icon
-                                        icon={`fas fa-envelope${
+                                        icon={`far fa-envelope${
                                             currentPage &&
                                             currentPage === "/contact"
                                                 ? "-open"
                                                 : ""
                                         }`}
+                                    />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="#"
+                                    title="Toggle modes"
+                                >
+                                    <Icon
+                                        icon={`far fa-lightbulb`}
                                     />
                                 </Link>
                             </li>
