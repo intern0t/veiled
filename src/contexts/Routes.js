@@ -3,7 +3,6 @@ import Sidebar from "../components/Sidebar";
 import Brightbar from "../components/Brightbar";
 import MainPage from "../components/pages/MainPage";
 import Conversation from "../components/pages/Conversation";
-import Settings from "../components/pages/Settings";
 import { AppProvider } from "../contexts/AppProvider";
 import { ConversationProvider } from "../contexts/ConversationProvider";
 import { Switch, Route } from "react-router-dom";
@@ -27,15 +26,6 @@ const ApplicationRouter = () => {
                                     component={props => {
                                         return <Conversation {...props} />;
                                     }}
-                                />
-                                <Route
-                                    exact
-                                    path="/settings"
-                                    component={props => (
-                                        <PageWrapper {...props}>
-                                            <Settings {...props} />
-                                        </PageWrapper>
-                                    )}
                                 />
                                 <Route
                                     exact

@@ -8,8 +8,20 @@ export class AppProvider extends Component {
             currentPage: "/conversation",
             mailTabDisplayed: true,
             conversationSettingsModalDisplayed: false,
-            newConversationModalDisplayed: false
+            newConversationModalDisplayed: false,
+            settingsModalDisplayed: false
         }
+    };
+
+    toggleSettingsModal = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            displayInformation: {
+                ...prevState.displayInformation,
+                settingsModalDisplayed: !prevState.displayInformation
+                    .settingsModalDisplayed
+            }
+        }));
     };
 
     toggleMailTab = e => {
@@ -42,7 +54,10 @@ export class AppProvider extends Component {
                     currentPage: displayInformation.currentPage,
                     mailTabDisplayed: displayInformation.mailTabDisplayed,
                     toggleMailTab: this.toggleMailTab,
-                    onPageChange: this.onPageChange
+                    onPageChange: this.onPageChange,
+                    settingsModalDisplayed:
+                        displayInformation.settingsModalDisplayed,
+                    toggleSettingsModal: this.toggleSettingsModal
                 }}
             >
                 {children}
